@@ -63,7 +63,7 @@ namespace KohaneEngine.Scripts
             Story = Resolver.Resolve<IStoryReader>().ReadFrom(storyAsset);
             Debug.Log($"Success! Version Num: {Story.version}");
             
-            StoryResolver.Resolve(Story.story.scenes[0].blocks[1]);
+            StoryResolver.Resolve(Story.story.scenes[1].blocks[0]);
         }
     }
 }

@@ -4,6 +4,7 @@
 		"scenes": [
 			{
 				"label": "__entrypoint__",
+				"_": "默认同步执行，用etc中决定异步同时执行",
 				"blocks": [
 					{
 						"type": "bgm",
@@ -17,6 +18,10 @@
 						"text": "这是我说的一句话\n我还可以换行<b>加粗</b><i>斜体</i>",
 						"click": true,
 						"_": "Null char for ???"
+					},
+					{
+						"type": "etc",
+						"op": "async"
 					},
 					{
 						"type": "background",
@@ -51,7 +56,7 @@
 					{
 						"type": "text",
 						"name": "我是谁？",
-						"text": "label之间跳转",
+						"text": "label之间跳转\n那么scene1即会继承__entrypoint__的内容\n（这是为了可以保存读取用的，不一定用得到在这里）",
 						"click": true
 					}
 				]
