@@ -35,14 +35,16 @@ namespace KohaneEngine.Scripts
 
         private static void InitializeResolvers()
         {
-            Resolver.Register<IKohaneRuntimeStructSerializer, JsonSerializer>();
+            Resolver.Register<IKohaneRuntimeStructSerializer, YukimiJsonSerializer>();
             Resolver.Register<IStoryReader, TextAssetReader>();
             Resolver.Register<IResourceManager, ResourceManager.ResourceManager>();
             
             // Register types
             StoryResolver.Register<AudioResolver>("bgm");
             StoryResolver.Register<AudioResolver>("sfx");
-            StoryResolver.Register<TextResolver>("text");
+            StoryResolver.Register<TextResolver>("__text_begin");
+            StoryResolver.Register<TextResolver>("__text_type");
+            StoryResolver.Register<TextResolver>("__text_end");
         }
 
         public new static T GetComponent<T>() where T: Component
@@ -61,9 +63,21 @@ namespace KohaneEngine.Scripts
         private void ReadStory()
         {
             Story = Resolver.Resolve<IStoryReader>().ReadFrom(storyAsset);
-            Debug.Log($"Success! Version Num: {Story.version}");
+            Debug.Log($"[KohaneEngine] Read KohaneStruct! Version: {Story.version}");
+
+            foreach (var block in Story.scenes[0].blocks)
+            {
+                StoryResolver.Resolve(block);
+                // try
+                // {
+                //     StoryResolver.Resolve(block);
+                // }
+                // catch(Exception ex)
+                // {
+                //     Debug.Log(ex);
+                // }
+            }
             
-            StoryResolver.Resolve(Story.story.scenes[1].blocks[0]);
         }
     }
 }

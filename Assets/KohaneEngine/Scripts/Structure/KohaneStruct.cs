@@ -7,36 +7,20 @@ namespace KohaneEngine.Scripts.Structure
     public class KohaneStruct
     {
         public string version;
-        public Story story;
+        public List<Scene> scenes = new();
     }
     
     [Serializable]
     public class Block
     {
         public string type;
-        public string op;
-        public string name;
-        public string text;
-        public string audio;
-        public float volume;
-        public bool click;
-        public string img;
-        public int alpha;
-        public List<int> pos;
-        public string target;
+        public List<object> args;
     }
 
     [Serializable]
     public class Scene
     {
         public string label;
-        public List<Block> blocks;
-        public string inherit;
-    }
-
-    [Serializable]
-    public class Story
-    {
-        public List<Scene> scenes;
+        public List<Block> blocks = new();
     }
 }
