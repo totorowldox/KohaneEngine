@@ -20,7 +20,6 @@ namespace KohaneEngine.Scripts.Structure
         public string audio;
         public float volume;
         public bool click;
-        public string _;
         public string img;
         public int alpha;
         public List<int> pos;
@@ -33,7 +32,6 @@ namespace KohaneEngine.Scripts.Structure
         public string label;
         public List<Block> blocks;
         public string inherit;
-        public string _;
     }
 
     [Serializable]
