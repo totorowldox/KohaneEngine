@@ -1,0 +1,39 @@
+# 系统设置
+-extern waitForClick
+-extern wait time=1
+-extern canSkip val #true or false(default)
+-extern startAsync
+-extern endAsync
+
+#角色
+-extern charDefine id
+-extern charUndefine id
+-extern charSwitch id path
+-extern charMove id x=0 y=0 tween=0 time=0.2
+-extern charAlpha id alpha tween=0 time=0.2
+
+-macro charSpawn id path x=0 y=0 alpha=1 tween=0 time=0.2
+@charDefine id 
+@charSwitch id path
+@charMove id x y tween time
+@charAlpha id 1 tween time
+
+-macro charRemove id tween=0 time=0.2
+@charAlpha id 0 tween time
+@charUndefine id
+
+#背景
+-extern backgroundSwitch path alpha=1 operation="switch"# switch or remove
+
+#音频
+-extern bgm path volume=1 operation="play"#play & stop
+-extern sfx path volume=1 operation="play"
+
+-scene "__entrypoint__"
+Hello, World!
+@charSpawn "A" "A_001.png"
+A: 你好！
+@charSwitch "A" "A_002.png"
+A: This is an example script! \
+sdfsdf \
+我换行了吗？

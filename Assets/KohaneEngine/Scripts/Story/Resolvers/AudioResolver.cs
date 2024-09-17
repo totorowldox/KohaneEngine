@@ -1,5 +1,6 @@
 ﻿using KohaneEngine.Scripts.ResourceManager;
 using KohaneEngine.Scripts.Structure;
+using KohaneEngine.Scripts.Utils;
 using UnityEngine;
 
 namespace KohaneEngine.Scripts.Story.Resolvers
@@ -18,23 +19,27 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         
         public override ResolveResult Resolve(Block block)
         {
+            var audio = block.GetArg<string>(0);
+            var volume = block.GetArg<float>(1);
+            var op = block.GetArg<string>(2);
+            
             switch (block.type)
             {
                 case "bgm":
-                    if (block.op == "stop")
+                    if (op == "stop")
                     {
                         Debug.Log("[Audio] Stopping BGM");
                         StopBGM();
                     }
                     else
                     {
-                        PlayBGM(block.audio, block.volume);
-                        Debug.Log($"[Audio] Playing BGM {block.audio}");
+                        PlayBGM(audio, volume);
+                        Debug.Log($"[Audio] Playing BGM {audio}");
                     }
                     break;
                 case "sfx":
-                    Debug.Log($"[Audio] Playing SFX {block.audio}");
-                    PlayFX(block.audio, block.volume);
+                    Debug.Log($"[Audio] Playing SFX {audio}");
+                    PlayFX(audio, volume);
                     break;
             }
 

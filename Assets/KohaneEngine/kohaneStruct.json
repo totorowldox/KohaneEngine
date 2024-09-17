@@ -1,0 +1,66 @@
+{
+	"version": "0.1",
+	"story" : {
+		"scenes": [
+			{
+				"label": "__entrypoint__",
+				"_": "默认同步执行，用etc中决定异步同时执行",
+				"blocks": [
+					{
+						"type": "bgm",
+						"op": "play",
+						"audio": "himmel - Seraphim",
+						"volume": 0.5
+					},
+					{
+						"type": "text",
+						"name": "我是A",
+						"text": "这是我说的一句话\n我还可以换行<b>加粗</b><i>斜体</i>",
+						"click": true,
+						"_": "Null char for ???"
+					},
+					{
+						"type": "etc",
+						"op": "async"
+					},
+					{
+						"type": "background",
+						"img": "bg1_001.png",
+						"alpha": 1
+					},
+					{
+						"type": "image",
+						"img": "char1_001.png",
+						"alpha": 1,
+						"pos": [0, 0],
+						"_": "前一个垂直(-2~2从下到上), 后一个水平(-2~2从左到右)"
+					},
+					{
+						"type": "text",
+						"name": "我是谁？",
+						"text": "以上两个操作同时执行因为没有设置click",
+						"click": true
+						
+					},
+					{
+						"type": "jump",
+						"target": "scene1"
+					}
+				]
+			},
+			{
+				"label": "scene1",
+				"inherit": "__entrypoint__",
+				"_": "那么scene1即会继承__entrypoint__的内容（这是为了可以保存读取用的，不一定用得到在这里）",
+				"blocks": [
+					{
+						"type": "text",
+						"name": "我是谁？",
+						"text": "label之间跳转\n那么scene1即会继承__entrypoint__的内容\n（这是为了可以保存读取用的，不一定用得到在这里）",
+						"click": true
+					}
+				]
+			}
+		]
+	}
+}
