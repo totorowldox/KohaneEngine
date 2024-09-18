@@ -1,5 +1,4 @@
 ﻿using KohaneEngine.Scripts.Structure;
-using UnityEditorInternal;
 
 namespace KohaneEngine.Scripts.Serializer
 {

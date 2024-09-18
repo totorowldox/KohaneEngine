@@ -1,5 +1,4 @@
-﻿using System;
-using KohaneEngine.Scripts.Serializer;
+﻿using KohaneEngine.Scripts.Serializer;
 using KohaneEngine.Scripts.Structure;
 using UnityEngine;
 

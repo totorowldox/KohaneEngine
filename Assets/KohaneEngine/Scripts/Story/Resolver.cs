@@ -1,6 +1,4 @@
-﻿using System;
-using KohaneEngine.Scripts.Structure;
-using UnityEngine;
+﻿using KohaneEngine.Scripts.Structure;
 
 namespace KohaneEngine.Scripts.Story
 {
