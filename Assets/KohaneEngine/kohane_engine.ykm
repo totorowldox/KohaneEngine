@@ -9,10 +9,10 @@
 -extern charDefine id
 -extern charUndefine id
 -extern charSwitch id path
--extern charMove id x=0 y=0 tween=0 time=0.2
+-extern charMove id x=0.0 y=0.0 tween=0 time=0.2
 -extern charAlpha id alpha tween=0 time=0.2
 
--macro charSpawn id path x=0 y=0 alpha=1 tween=0 time=0.2
+-macro charSpawn id path x=0.0 y=0.0 alpha=1.0 tween=0 time=0.2
 @charDefine id 
 @charSwitch id path
 @charMove id x y tween time
@@ -23,13 +23,14 @@
 @charUndefine id
 
 #背景
--extern backgroundSwitch path alpha=1 operation="switch"# switch or remove
+-extern backgroundSwitch path alpha=1.0 operation="switch"# switch or remove
 
 #音频
--extern bgm path volume=1 operation="play"#play & stop
--extern sfx path volume=1 operation="play"
+-extern bgm path volume=1.0 operation="play"#play & stop
+-extern sfx path volume=1.0 operation="play"
 
 -scene "__entrypoint__"
+@bgm "1.mp3" 0.5
 Hello, World!
 @charSpawn "A" "A_001.png"
 A: 你好！

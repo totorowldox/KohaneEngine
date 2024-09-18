@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace KohaneEngine.Scripts.Framework
 {
@@ -16,7 +17,28 @@ namespace KohaneEngine.Scripts.Framework
         /// <typeparam name="TImplementation">The implemented type</typeparam>
         public void Register<TInterface, TImplementation>() where TImplementation : TInterface
         {
+            Debug.Log($"[DependencyResolver] Using {typeof(TImplementation)} for {typeof(TInterface)}");
             _typeMap[typeof(TInterface)] = typeof(TImplementation);
+        }
+        
+        /// <summary>
+        /// Registers a class for later instantiation
+        /// </summary>
+        /// <typeparam name="TClass">The class type</typeparam>
+        public void Register<TClass>() where TClass : class
+        {
+            _typeMap[typeof(TClass)] = typeof(TClass);
+        }
+        
+        /// <summary>
+        /// Registers an instance of a specific type
+        /// </summary>
+        /// <typeparam name="T">Type of the instance</typeparam>
+        /// <param name="instance">The instance to register</param>
+        public void RegisterInstance<T>(T instance)
+        {
+            Debug.Log($"[DependencyResolver] Using instance of {typeof(T)}");
+            _implementationMap[typeof(T)] = instance;
         }
 
         /// <summary>

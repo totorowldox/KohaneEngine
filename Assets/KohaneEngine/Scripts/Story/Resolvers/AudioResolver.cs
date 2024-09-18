@@ -10,10 +10,10 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         private readonly AudioSource _bgmSource;
         private readonly IResourceManager _resourceManager;
         
-        public AudioResolver(IResourceManager resourceManager)
+        public AudioResolver(IResourceManager resourceManager, KohaneBinder binder)
         {
             _resourceManager = resourceManager;
-            _bgmSource = KohaneEngine.GetComponent<AudioSource>();
+            _bgmSource = binder.bgmSource;
             _bgmSource.playOnAwake = false;
         }
         

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using KohaneEngine.Scripts.Framework;
 using KohaneEngine.Scripts.Structure;
 using KohaneEngine.Scripts.Utils;
 
@@ -13,12 +14,14 @@ namespace KohaneEngine.Scripts.Story.Resolvers
     
     public class TextResolver : Resolver
     {
-        private readonly KohaneUIBinder _binder;
+        private readonly KohaneBinder _binder;
+        private readonly KohaneStateManager _stateManager;
         private TypeWriter _typeWriter;
         
-        public TextResolver()
+        public TextResolver(KohaneBinder binder, KohaneStateManager stateManager)
         {
-            _binder = KohaneEngine.GetUIBinder();
+            _binder = binder;
+            _stateManager = stateManager;
         }
         
         public override ResolveResult Resolve(Block block)
@@ -63,6 +66,8 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             
             _binder.speaker.text = _typeWriter.Name;
             _binder.text.text = _typeWriter.Text.ToString();
+            
+            _stateManager.SwitchState(KohaneState.WaitingForClick);
         }
 
         private void TextType(Block block)

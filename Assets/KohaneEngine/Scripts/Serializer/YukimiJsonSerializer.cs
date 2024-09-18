@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using KohaneEngine.Scripts.Structure;
-using Unity.Plastic.Newtonsoft.Json;
-using UnityEngine;
+using Newtonsoft.Json;
 using YukimiScript = System.Collections.Generic.List<KohaneEngine.Scripts.Structure.YukimiStruct.Root>;
 
 namespace KohaneEngine.Scripts.Serializer

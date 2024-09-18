@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using KohaneEngine.Scripts.Framework;
+﻿using KohaneEngine.Scripts.Framework;
 using KohaneEngine.Scripts.ResourceManager;
 using KohaneEngine.Scripts.Serializer;
+using KohaneEngine.Scripts.Story;
 using KohaneEngine.Scripts.Story.Resolvers;
 using KohaneEngine.Scripts.StoryReader;
 using KohaneEngine.Scripts.Structure;
@@ -10,21 +9,18 @@ using UnityEngine;
 
 namespace KohaneEngine.Scripts
 {
-    [RequireComponent(typeof(KohaneUIBinder))]
+    [RequireComponent(typeof(KohaneBinder))]
     public class KohaneEngine : MonoBehaviour
     {
         public static DependencyResolver Resolver;
         public static StoryResolver StoryResolver;
-        public static KohaneStruct Story;
         public static KohaneEngine Instance;
-        public static readonly Dictionary<Type, object> Components = new();
 
         [SerializeField] private TextAsset storyAsset;
         
         private void Awake()
         {
             Instance = this;
-            Components.Clear();
             Resolver = new DependencyResolver();
             StoryResolver = new StoryResolver();
             InitializeResolvers();
@@ -33,11 +29,15 @@ namespace KohaneEngine.Scripts
             ReadStory();
         }
 
-        private static void InitializeResolvers()
+        private void InitializeResolvers()
         {
+            Resolver.RegisterInstance(GetComponent<KohaneBinder>());
+            Resolver.RegisterInstance(gameObject.AddComponent<KohaneInputManager>());
+            Resolver.Register<KohaneStateManager>();
+            Resolver.Register<KohaneStoryManager>();
             Resolver.Register<IKohaneRuntimeStructSerializer, YukimiJsonSerializer>();
             Resolver.Register<IStoryReader, TextAssetReader>();
-            Resolver.Register<IResourceManager, ResourceManager.ResourceManager>();
+            Resolver.Register<IResourceManager, LegacyResourceManager>();
             
             // Register types
             StoryResolver.Register<AudioResolver>("bgm");
@@ -47,37 +47,12 @@ namespace KohaneEngine.Scripts
             StoryResolver.Register<TextResolver>("__text_end");
         }
 
-        public new static T GetComponent<T>() where T: Component
-        {
-            if (Components.ContainsKey(typeof(T))) return (T)Components[typeof(T)];
-            var newComponent = Instance.gameObject.AddComponent<T>();
-            Components.Add(typeof(T), newComponent);
-            return newComponent;
-        }
-
-        public static KohaneUIBinder GetUIBinder()
-        {
-            return Instance.gameObject.GetComponent<KohaneUIBinder>();
-        }
-
         private void ReadStory()
         {
-            Story = Resolver.Resolve<IStoryReader>().ReadFrom(storyAsset);
-            Debug.Log($"[KohaneEngine] Read KohaneStruct! Version: {Story.version}");
+            var story = Resolver.Resolve<IStoryReader>().ReadFrom(storyAsset);
+            Debug.Log($"[KohaneEngine] Read KohaneStruct! Version: {story.version}");
 
-            foreach (var block in Story.scenes[0].blocks)
-            {
-                StoryResolver.Resolve(block);
-                // try
-                // {
-                //     StoryResolver.Resolve(block);
-                // }
-                // catch(Exception ex)
-                // {
-                //     Debug.Log(ex);
-                // }
-            }
-            
+            Resolver.Resolve<KohaneStoryManager>().StartStory(story);
         }
     }
 }
