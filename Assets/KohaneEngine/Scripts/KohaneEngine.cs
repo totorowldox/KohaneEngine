@@ -35,16 +35,22 @@ namespace KohaneEngine.Scripts
             Resolver.RegisterInstance(gameObject.AddComponent<KohaneInputManager>());
             Resolver.Register<KohaneStateManager>();
             Resolver.Register<KohaneStoryManager>();
+            Resolver.Register<KohaneAnimator>();
             Resolver.Register<IKohaneRuntimeStructSerializer, YukimiJsonSerializer>();
             Resolver.Register<IStoryReader, TextAssetReader>();
             Resolver.Register<IResourceManager, LegacyResourceManager>();
             
+            UseYukimiScript();
+        }
+
+        private void UseYukimiScript()
+        {
             // Register types
-            StoryResolver.Register<AudioResolver>("bgm");
-            StoryResolver.Register<AudioResolver>("sfx");
-            StoryResolver.Register<TextResolver>("__text_begin");
-            StoryResolver.Register<TextResolver>("__text_type");
-            StoryResolver.Register<TextResolver>("__text_end");
+            StoryResolver.Register<AudioResolver>("bgm", "sfx");
+            StoryResolver.Register<TextResolver>("__text_begin", "__text_type", "__text_end");
+            StoryResolver.Register<CharacterResolver>("__charDefine", "__charDelete", 
+                "charSwitch", "charMove", "charAlpha", "charScale");
+            StoryResolver.Register<EtcResolver>("startAsync", "endAsync", "wait", "waitForClick", "canSkip");
         }
 
         private void ReadStory()

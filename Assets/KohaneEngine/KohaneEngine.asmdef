@@ -1,7 +1,9 @@
 {
     "name": "KohaneEngine",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:129088843a728cf47a8de436309c9822"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

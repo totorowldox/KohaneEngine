@@ -11,14 +11,29 @@ namespace KohaneEngine.Scripts.Framework
         private readonly Dictionary<string, Type> _typeMap = new();
 
         /// <summary>
-        /// Register a resolver to a type, TYPE MUST BE ABSTRACT INTERFACE
+        /// Register a resolver to a block type
         /// </summary>
-        /// <typeparam name="T">Block type</typeparam>
+        /// <typeparam name="T">Resolver</typeparam>
         public void Register<T>(string type)
         {
             if (!_typeMap.TryAdd(type, typeof(T)))
             {
                 throw new InvalidOperationException($"Block type {type} has been registered");
+            }
+        }
+        
+        /// <summary>
+        /// Register a resolver to some block types
+        /// </summary>
+        /// <typeparam name="T">Resolver</typeparam>
+        public void Register<T>(params string[] types)
+        {
+            foreach (var type in types)
+            {
+                if (!_typeMap.TryAdd(type, typeof(T)))
+                {
+                    throw new InvalidOperationException($"Block type {type} has been registered");
+                }
             }
         }
 
@@ -35,10 +50,7 @@ namespace KohaneEngine.Scripts.Framework
             Debug.Log($"[StoryResolver] Resolving type {block.type}.");
             
             var resolver = KohaneEngine.Resolver.ResolveByType(resolverType) as Resolver;
-            resolver.Resolve(block);
-            
-            // Finally process the result, deal with sth like "click"
-            
+            resolver!.Resolve(block);
         }
     }
 }

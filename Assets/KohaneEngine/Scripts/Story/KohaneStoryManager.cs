@@ -12,14 +12,16 @@ namespace KohaneEngine.Scripts.Story
         private int _currentBlockIndex = 0;
         private KohaneStruct _story;
         
-        private KohaneStateManager _stateManager;
-        
+        private readonly KohaneStateManager _stateManager;
+        private readonly KohaneAnimator _animator;
+
         private Scene CurrentScene => _story.scenes[_currentSceneIndex];
         private Block CurrentBlock => _story.scenes[_currentSceneIndex].blocks[_currentBlockIndex];
         
-        public KohaneStoryManager(KohaneStateManager stateManager)
+        public KohaneStoryManager(KohaneStateManager stateManager, KohaneAnimator animator)
         {
             _stateManager = stateManager;
+            _animator = animator;
         }
 
         public void StartStory(KohaneStruct story)
@@ -34,12 +36,14 @@ namespace KohaneEngine.Scripts.Story
             {
                 return;
             }
+            
             while (!_stateManager.IsInState(KohaneState.WaitingForClick))
             {
                 StoryResolver.Resolve(CurrentBlock);
                 ToNextBlock();
             }
-            _stateManager.SwitchState(KohaneState.Ready);
+
+            _animator.StartAnimation();
         }
 
         private void ToNextBlock()
