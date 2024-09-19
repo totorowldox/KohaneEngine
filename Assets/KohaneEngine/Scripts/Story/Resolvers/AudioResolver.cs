@@ -15,6 +15,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             _resourceManager = resourceManager;
             _bgmSource = binder.bgmSource;
             _bgmSource.playOnAwake = false;
+            _bgmSource.loop = true;
         }
         
         public override ResolveResult Resolve(Block block)
@@ -60,7 +61,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
 
         private async void PlayFX(string id, float volume = 1)
         {
-            var sfx = await _resourceManager.LoadResourceAsync<AudioClip>(string.Format(Constants.FXPath, id));
+            var sfx = await _resourceManager.LoadResourceAsync<AudioClip>(string.Format(Constants.SfxPath, id));
             AudioSource.PlayClipAtPoint(sfx, Camera.main!.transform.position, volume);
         }
     }

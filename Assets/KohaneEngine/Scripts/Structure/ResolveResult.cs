@@ -3,12 +3,18 @@
     public class ResolveResult
     {
         public bool Success = false;
-        public float WaitTime = 0.0f;
+        public string Reason;
 
-        public static ResolveResult SuccessResult(float waitTime = 0) => new()
+        public static ResolveResult SuccessResult(string reason = "") => new()
         {
             Success = true,
-            WaitTime = waitTime
+            Reason = reason
+        };
+
+        public static ResolveResult FailResult(string reason = "") => new()
+        {
+            Success = false, 
+            Reason = reason
         };
     }
 }

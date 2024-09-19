@@ -12,16 +12,17 @@ namespace KohaneEngine.Scripts.Utils
         {
             if (typeof(T) == typeof(float))
             {
-                object value = block.GetFloatArg(index);
+                object value = Convert.ToSingle(block?.args[index]);
+                return (T) value;
+            }
+
+            if (typeof(T) == typeof(int))
+            {
+                object value = Convert.ToInt32(block?.args[index]);
                 return (T) value;
             }
             
             return (T)block?.args[index] ?? default(T);
-        }
-
-        private static float GetFloatArg(this Block block, int index)
-        {
-            return Convert.ToSingle(block?.args[index]);
         }
 
         /// <summary>

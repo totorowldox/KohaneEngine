@@ -12,5 +12,14 @@ namespace KohaneEngine.Scripts
         [Header("Dialog")]
         public Text speaker;
         public Text text;
+        
+        [Space(10)]
+        [Header("Character")]
+        public Image characterPrototype;
+        public RectTransform characterParentTransform;
+
+
+
+        public Image CreateCharacterImage() => Instantiate(characterPrototype, characterParentTransform);
     }
 }
