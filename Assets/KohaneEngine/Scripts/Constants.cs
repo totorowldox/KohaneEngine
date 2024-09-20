@@ -18,5 +18,9 @@ namespace KohaneEngine.Scripts
         
         // Delay per character
         public const float TypeAnimationSpeed = 0.02f;
+        
+        // Delay per block
+        public const float AutoSpeed = 1f;
+        public const float SkipSpeed = 0.2f;
     }
 }

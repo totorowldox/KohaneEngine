@@ -29,7 +29,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
                     _animator.AppendTweenInterval(block.GetArg<float>(0));
                     break;
                 case "waitForClick":
-                    _stateManager.SwitchState(KohaneState.WaitingForClick);
+                    _stateManager.SwitchState(KohaneState.ResolveEnd);
                     break;
                 case "canSkip":
                     var canSkip = block.GetArg<bool>(0);

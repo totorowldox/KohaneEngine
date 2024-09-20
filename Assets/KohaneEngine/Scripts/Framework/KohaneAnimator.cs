@@ -1,6 +1,5 @@
 ﻿using System;
 using DG.Tweening;
-using UnityEngine;
 
 namespace KohaneEngine.Scripts.Framework
 {
@@ -46,9 +45,12 @@ namespace KohaneEngine.Scripts.Framework
         public void StartAnimation()
         {
             var shouldComplete = StateManager.HasFlag(KohaneFlag.Skip);
+            var addedDelay = StateManager.HasFlag(KohaneFlag.Auto) ? Constants.AutoSpeed : 0f;
+            addedDelay = StateManager.HasFlag(KohaneFlag.Skip) ? Constants.SkipSpeed : addedDelay;
 
             if (!shouldComplete && StateManager.AddFlag(KohaneFlag.Animating))
             {
+                _tweenSequence.AppendInterval(addedDelay);
                 _tweenSequence.OnComplete(delegate
                 {
                     StateManager.RemoveFlag(KohaneFlag.Animating);
@@ -59,7 +61,13 @@ namespace KohaneEngine.Scripts.Framework
             else
             {
                 _tweenSequence.Complete();
-                StateManager.SwitchState(KohaneState.Ready);
+                _tweenSequence = DOTween.Sequence();
+                _tweenSequence.AppendInterval(addedDelay);
+                _tweenSequence.OnComplete(delegate
+                {
+                    StateManager.SwitchState(KohaneState.Ready);
+                });
+                _tweenSequence.Play();
             }
         }
 

@@ -30,9 +30,53 @@
 -extern bgm path volume=1.0 operation="play"#play & stop
 -extern sfx path volume=1.0 operation="play"
 
+#背景
+-extern backgroundSwitch path alpha=1.0 operation="switch"# switch or remove
+
+
 -scene "__entrypoint__"
 @bgm "1.mp3" 1
 Hello, World!
+
+Scene: A quiet park at sunset. The sky is painted with hues of orange and pink.
+
+Alice: It's so peaceful here. I could stay forever.
+
+Brian: Yeah, it's a nice break from the chaos of the city.
+
+Alice looks up at the sky, her eyes reflecting the colors of the sunset.
+
+Alice: Do you remember the first time we came here?
+
+Brian: How could I forget? You were chasing that squirrel and tripped over your own feet.
+
+Alice laughs, the sound light and carefree.
+
+Alice: Hey, that squirrel was fast! But you caught me before I hit the ground.
+
+Brian smiles, his gaze softening as he watches her.
+
+Brian: I'll always be there to catch you, Alice.
+
+A gentle breeze rustles the leaves around them, carrying the scent of blooming flowers.
+
+Alice: Brian, there's something I've been meaning to tell you.
+
+Brian: What is it?
+
+Alice takes a deep breath, her heart pounding in her chest.
+
+Alice: I... I think I'm falling for you.
+
+Brian's eyes widen in surprise, but then a warm smile spreads across his face.
+
+Brian: Funny, I was just about to say the same thing.
+
+They both laugh, the tension melting away as they realize their feelings are mutual.
+
+The sun dips below the horizon, casting a golden glow over the park. As the first stars begin to twinkle in the night sky, Alice and Brian share a tender embrace, knowing that this moment marks the beginning of something beautiful.
+
+
 @charSpawn "A" "A_001.png"
 A: 你好！
 @charSwitch "A" "A_002.png"
@@ -43,12 +87,7 @@ A: 你好！
 @endAsync
 A: 这只是一个简单的示例
 @charRemove "A"
-以上
-
-
-
-#背景
--extern backgroundSwitch path alpha=1.0 operation="switch"# switch or remove
+以上    
 
 # Scene: A quiet park at sunset. The sky is painted with hues of orange and pink.
 

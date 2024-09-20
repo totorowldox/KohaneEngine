@@ -8,8 +8,8 @@ namespace KohaneEngine.Scripts.Story
     {
         private static StoryResolver StoryResolver => KohaneEngine.StoryResolver;
         
-        private int _currentSceneIndex = 0;
-        private int _currentBlockIndex = 0;
+        private int _currentSceneIndex;
+        private int _currentBlockIndex;
         private KohaneStruct _story;
         
         private readonly KohaneStateManager _stateManager;
@@ -37,7 +37,7 @@ namespace KohaneEngine.Scripts.Story
                 return;
             }
             
-            while (!_stateManager.IsInState(KohaneState.WaitingForClick))
+            while (!_stateManager.IsInState(KohaneState.ResolveEnd))
             {
                 StoryResolver.Resolve(CurrentBlock);
                 ToNextBlock();
