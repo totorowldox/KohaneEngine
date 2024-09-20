@@ -47,8 +47,6 @@ namespace KohaneEngine.Scripts.Framework
                 throw new InvalidOperationException($"Unknown block type {block.type}");
             }
             
-            Debug.Log($"[StoryResolver] Resolving type {block.type}.");
-            
             var resolver = KohaneEngine.Resolver.ResolveByType(resolverType) as Resolver;
             resolver!.Resolve(block);
         }

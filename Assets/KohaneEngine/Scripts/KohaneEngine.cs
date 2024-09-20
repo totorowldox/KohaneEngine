@@ -4,7 +4,6 @@ using KohaneEngine.Scripts.Serializer;
 using KohaneEngine.Scripts.Story;
 using KohaneEngine.Scripts.Story.Resolvers;
 using KohaneEngine.Scripts.StoryReader;
-using KohaneEngine.Scripts.Structure;
 using UnityEngine;
 
 namespace KohaneEngine.Scripts
@@ -32,9 +31,10 @@ namespace KohaneEngine.Scripts
         private void InitializeResolvers()
         {
             Resolver.RegisterInstance(GetComponent<KohaneBinder>());
-            Resolver.RegisterInstance(gameObject.AddComponent<KohaneInputManager>());
+            Resolver.RegisterInstance(gameObject.AddComponent<KohaneInteractManager>());
             Resolver.Register<KohaneStateManager>();
             Resolver.Register<KohaneStoryManager>();
+            Resolver.Register<KohaneAutoPlayManager>();
             Resolver.Register<KohaneAnimator>();
             Resolver.Register<IKohaneRuntimeStructSerializer, YukimiJsonSerializer>();
             Resolver.Register<IStoryReader, TextAssetReader>();

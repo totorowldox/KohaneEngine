@@ -5,10 +5,10 @@ namespace KohaneEngine.Scripts.Framework
 {
     public class KohaneStateManager
     {
-        private KohaneState CurrentState { get; set; } = KohaneState.Ready;
+        private KohaneState CurrentState { get; set; } = KohaneState.None;
         private KohaneFlag CurrentFlags { get; set; } = KohaneFlag.None;
 
-        private int _asyncLayers = 0;
+        private int _asyncLayers;
 
         public bool SwitchState(KohaneState nextState)
         {
@@ -17,12 +17,15 @@ namespace KohaneEngine.Scripts.Framework
             {
                 case KohaneState.Resolving:
                     if (!CanResolve())
+                    {
+                        Debug.LogWarning("<color=#e198b4>[StateManager]</color> Unable to set to resolving state!");
                         return false;
+                    }
                     break;
             }
 
             CurrentState = nextState;
-            Debug.Log("[StateManager] Current state: " + CurrentState);
+            Debug.Log("<color=#e198b4>[StateManager]</color> Current state: " + CurrentState);
             return true;
         }
 
@@ -58,22 +61,24 @@ namespace KohaneEngine.Scripts.Framework
         
         public bool HasFlag(KohaneFlag flag) => CurrentFlags.HasFlag(flag);
 
-        private bool CanResolve() => CurrentState.HasFlag(KohaneState.Ready) && !CurrentFlags.HasFlag(KohaneFlag.InSystem);
+        private bool CanResolve() => (IsInState(KohaneState.Ready) || IsInState(KohaneState.None)) && 
+                                     !HasFlag(KohaneFlag.InSystem);
 
-        private bool CanSkip() => !CurrentFlags.HasFlag(KohaneFlag.CannotSkip) &&
-                                  !CurrentFlags.HasFlag(KohaneFlag.InSystem);
+        private bool CanSkip() => !HasFlag(KohaneFlag.CannotSkip) &&
+                                  !HasFlag(KohaneFlag.InSystem);
     }
 
     [Flags]
-    public enum KohaneState : int
+    public enum KohaneState
     {
-        Ready = 0,
-        Resolving = 1 << 0,
-        WaitingForClick = 1 << 1,
+        None = 0,
+        Ready = 1 << 0,
+        Resolving = 1 << 1,
+        ResolveEnd = 1 << 2,
     }
     
     [Flags]
-    public enum KohaneFlag : int
+    public enum KohaneFlag
     {
         None = 0,
         Skip = 1 << 1,

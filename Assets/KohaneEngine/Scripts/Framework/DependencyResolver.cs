@@ -17,7 +17,7 @@ namespace KohaneEngine.Scripts.Framework
         /// <typeparam name="TImplementation">The implemented type</typeparam>
         public void Register<TInterface, TImplementation>() where TImplementation : TInterface
         {
-            Debug.Log($"[DependencyResolver] Using {typeof(TImplementation)} for {typeof(TInterface)}");
+            Debug.Log($"<color=#68be8d>[DependencyResolver]</color> Using {typeof(TImplementation)} for {typeof(TInterface)}");
             _typeMap[typeof(TInterface)] = typeof(TImplementation);
         }
         
@@ -37,7 +37,7 @@ namespace KohaneEngine.Scripts.Framework
         /// <param name="instance">The instance to register</param>
         public void RegisterInstance<T>(T instance)
         {
-            Debug.Log($"[DependencyResolver] Using instance of {typeof(T)}");
+            Debug.Log($"<color=#68be8d>[DependencyResolver]</color> Using instance of {typeof(T)}");
             _implementationMap[typeof(T)] = instance;
         }
 

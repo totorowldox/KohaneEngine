@@ -69,7 +69,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             
             TypeAnimation();
             
-            _stateManager.SwitchState(KohaneState.WaitingForClick);
+            _stateManager.SwitchState(KohaneState.ResolveEnd);
         }
 
         private void TextType(Block block)
