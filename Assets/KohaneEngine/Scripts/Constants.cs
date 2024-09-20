@@ -12,6 +12,8 @@ namespace KohaneEngine.Scripts
         public const string SfxPath = "KohaneEngine/SFX/{0}";
 
         public const string CharacterPath = "KohaneEngine/Character/{0}";
+        
+        public const string BackgroundPath = "KohaneEngine/Background/{0}";
 
         public const float CanvasWidth = 1920;
         public const float CanvasHeight = 1080;

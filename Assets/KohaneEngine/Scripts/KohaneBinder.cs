@@ -19,6 +19,11 @@ namespace KohaneEngine.Scripts
         public Image characterPrototype;
         public RectTransform characterParentTransform;
 
+
+        [Space(10)]
+        [Header("Background")]
+        public Image backgroundImage;
+
         [Space(10)]
         [Header("System")]
         public Button touchArea;
