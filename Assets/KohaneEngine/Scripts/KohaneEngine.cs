@@ -50,6 +50,8 @@ namespace KohaneEngine.Scripts
             StoryResolver.Register<TextResolver>("__text_begin", "__text_type", "__text_end");
             StoryResolver.Register<CharacterResolver>("__charDefine", "__charDelete", 
                 "charSwitch", "charMove", "charAlpha", "charScale");
+            StoryResolver.Register<BackgroundResolver>("__bgSwitch", "__bgRemove", 
+                "bgAlpha", "bgMove");
             StoryResolver.Register<EtcResolver>("startAsync", "endAsync", "wait", "waitForClick", "canSkip");
         }
 

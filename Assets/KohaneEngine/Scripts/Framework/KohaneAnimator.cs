@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using DG.Tweening;
 
 namespace KohaneEngine.Scripts.Framework
@@ -9,6 +10,7 @@ namespace KohaneEngine.Scripts.Framework
     public class KohaneAnimator
     {
         private Sequence _tweenSequence = DOTween.Sequence();
+        private readonly List<TweenCallback> _pendingCallbacks = new();
 
         private KohaneStateManager _stateManager = null;
         private KohaneStateManager StateManager => _stateManager ??= KohaneEngine.Resolver.Resolve<KohaneStateManager>();
@@ -17,6 +19,7 @@ namespace KohaneEngine.Scripts.Framework
         {
             if (!_tweenSequence.IsActive() && !_tweenSequence.IsPlaying())
             {
+                _pendingCallbacks.Clear();
                 _tweenSequence = DOTween.Sequence();
             }
             
@@ -27,6 +30,30 @@ namespace KohaneEngine.Scripts.Framework
             else
             {
                 _tweenSequence.Append(tween);
+            }
+        }
+        
+        public void AppendCallback(TweenCallback callback)
+        {
+            if (!_tweenSequence.IsActive() && !_tweenSequence.IsPlaying())
+            {
+                _pendingCallbacks.Clear();
+                _tweenSequence = DOTween.Sequence();
+            }
+
+            TweenCallback wrappedCallback = () =>
+            {
+                callback?.Invoke();
+                _pendingCallbacks.Remove(callback);
+            };
+            _pendingCallbacks.Add(callback);
+            if (StateManager.HasFlag(KohaneFlag.AsyncResolving))
+            {
+                _tweenSequence.JoinCallback(wrappedCallback);
+            }
+            else
+            {
+                _tweenSequence.AppendCallback(wrappedCallback);
             }
         }
 
@@ -60,6 +87,7 @@ namespace KohaneEngine.Scripts.Framework
             }
             else
             {
+                _pendingCallbacks.ForEach(p => p?.Invoke());
                 _tweenSequence.Complete();
                 _tweenSequence = DOTween.Sequence();
                 _tweenSequence.AppendInterval(addedDelay);
@@ -73,6 +101,7 @@ namespace KohaneEngine.Scripts.Framework
 
         public void InterruptAnimation()
         {
+            _pendingCallbacks.ForEach(p => p?.Invoke());
             _tweenSequence.Complete();
         }
     }
