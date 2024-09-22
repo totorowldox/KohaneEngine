@@ -16,7 +16,7 @@ namespace KohaneEngine.Scripts
         
         [Space(10)]
         [Header("Character")]
-        public Image characterPrototype;
+        public RawImage characterPrototype;
         public RectTransform characterParentTransform;
 
 
@@ -24,6 +24,11 @@ namespace KohaneEngine.Scripts
         [Header("Background")]
         public Image backgroundImage;
 
+        [Space(10)]
+        [Header("UI")]
+        public Image blackScreenImage;
+        public CanvasGroup dialogCanvasGroup;
+        
         [Space(10)]
         [Header("System")]
         public Button touchArea;
@@ -35,6 +40,6 @@ namespace KohaneEngine.Scripts
             autoPlay.onClick.AddListener(() => KohaneEngine.Resolver.Resolve<KohaneAutoPlayManager>().ToggleAutoPlay());
         }
 
-        public Image CreateCharacterImage() => Instantiate(characterPrototype, characterParentTransform);
+        public RawImage CreateCharacterImage() => Instantiate(characterPrototype, characterParentTransform);
     }
 }

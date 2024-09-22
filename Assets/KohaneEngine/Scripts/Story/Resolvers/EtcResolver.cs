@@ -33,13 +33,13 @@ namespace KohaneEngine.Scripts.Story.Resolvers
                     break;
                 case "canSkip":
                     var canSkip = block.GetArg<bool>(0);
-                    if (canSkip)
+                    if (!canSkip)
                     {
-                        _stateManager.AddFlag(KohaneFlag.CannotSkip);
+                        _animator.AppendCallback(() =>_stateManager.AddFlag(KohaneFlag.CannotSkip));
                     }
                     else
                     {
-                        _stateManager.RemoveFlag(KohaneFlag.CannotSkip);
+                        _animator.AppendCallback(() =>_stateManager.RemoveFlag(KohaneFlag.CannotSkip));
                     }
                     break;
             }

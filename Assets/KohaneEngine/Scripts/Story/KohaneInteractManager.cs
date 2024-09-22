@@ -43,8 +43,9 @@ namespace KohaneEngine.Scripts.Story
                 _autoPlayManager.ToggleAutoPlay();
             }
             // Interrupt animation when input is pressed
-            else if (_stateManager.HasFlag(KohaneFlag.Animating))
+            else if (_stateManager.CanSkip() &&_stateManager.HasFlag(KohaneFlag.Animating))
             {
+                Debug.Log("!!Interrupt animation");
                 _animator.InterruptAnimation();
             }
             // Then we can perform next step
@@ -57,7 +58,7 @@ namespace KohaneEngine.Scripts.Story
         private bool DoAutoPlay()
         {
             // If we're not ready, return
-            if (!_stateManager.IsInState(KohaneState.Ready))
+            if (!_stateManager.CanResolve())
             {
                 return false;
             }

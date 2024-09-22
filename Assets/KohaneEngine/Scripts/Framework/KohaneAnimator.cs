@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DG.Tweening;
+using UnityEngine;
 
 namespace KohaneEngine.Scripts.Framework
 {
@@ -14,51 +15,67 @@ namespace KohaneEngine.Scripts.Framework
 
         private KohaneStateManager _stateManager = null;
         private KohaneStateManager StateManager => _stateManager ??= KohaneEngine.Resolver.Resolve<KohaneStateManager>();
+        private bool _isAsync = false;
 
-        public void AppendTweenAnimation(Tween tween)
+        public void AppendAnimation(Tween tween, bool forceAppend = false)
         {
-            if (!_tweenSequence.IsActive() && !_tweenSequence.IsPlaying())
-            {
-                _pendingCallbacks.Clear();
-                _tweenSequence = DOTween.Sequence();
-            }
-            
+            CheckTweenSequence();
             if (StateManager.HasFlag(KohaneFlag.AsyncResolving))
             {
-                _tweenSequence.Join(tween);
+                if (_isAsync)
+                {
+                    _tweenSequence.Join(tween);
+                }
+                else
+                {
+                    _tweenSequence.Append(tween);
+                    _isAsync = true;
+                }
             }
             else
             {
+                _isAsync = forceAppend && _isAsync;
                 _tweenSequence.Append(tween);
             }
         }
         
-        public void AppendCallback(TweenCallback callback)
+        public void JoinAnimation(Tween tween)
         {
-            if (!_tweenSequence.IsActive() && !_tweenSequence.IsPlaying())
-            {
-                _pendingCallbacks.Clear();
-                _tweenSequence = DOTween.Sequence();
-            }
+            CheckTweenSequence();
+            _tweenSequence.Join(tween);
+        }
 
+        public void AppendCallback(TweenCallback callback, bool forceAppend = false)
+        {
+            CheckTweenSequence();
             TweenCallback wrappedCallback = () =>
             {
                 callback?.Invoke();
                 _pendingCallbacks.Remove(callback);
             };
             _pendingCallbacks.Add(callback);
-            if (StateManager.HasFlag(KohaneFlag.AsyncResolving))
+            if (StateManager.HasFlag(KohaneFlag.AsyncResolving) && !forceAppend)
             {
-                _tweenSequence.JoinCallback(wrappedCallback);
+                if (_isAsync)
+                {
+                    _tweenSequence.JoinCallback(wrappedCallback);
+                }
+                else
+                {
+                    _tweenSequence.AppendCallback(wrappedCallback);
+                    _isAsync = true;
+                }
             }
             else
             {
+                _isAsync = forceAppend && _isAsync;
                 _tweenSequence.AppendCallback(wrappedCallback);
             }
         }
 
         public void AppendTweenInterval(float duration)
         {
+            CheckTweenSequence();
             if (!StateManager.HasFlag(KohaneFlag.AsyncResolving))
             {
                 _tweenSequence.AppendInterval(duration);
@@ -80,6 +97,7 @@ namespace KohaneEngine.Scripts.Framework
                 _tweenSequence.AppendInterval(addedDelay);
                 _tweenSequence.OnComplete(delegate
                 {
+                    _pendingCallbacks.ForEach(p => p?.Invoke());
                     StateManager.RemoveFlag(KohaneFlag.Animating);
                     StateManager.SwitchState(KohaneState.Ready);
                 });
@@ -103,6 +121,16 @@ namespace KohaneEngine.Scripts.Framework
         {
             _pendingCallbacks.ForEach(p => p?.Invoke());
             _tweenSequence.Complete();
+        }
+
+        private void CheckTweenSequence()
+        {
+            if (_tweenSequence.IsActive() || _tweenSequence.IsPlaying())
+            {
+                return;
+            }
+            _pendingCallbacks.Clear();
+            _tweenSequence = DOTween.Sequence();
         }
     }
 }

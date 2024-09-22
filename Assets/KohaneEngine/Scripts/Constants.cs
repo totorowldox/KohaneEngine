@@ -17,6 +17,8 @@ namespace KohaneEngine.Scripts
 
         public const float CanvasWidth = 1920;
         public const float CanvasHeight = 1080;
+
+        public const float CharacterCrossFadeDuration = 0.5f;
         
         // Delay per character
         public const float TypeAnimationSpeed = 0.02f;

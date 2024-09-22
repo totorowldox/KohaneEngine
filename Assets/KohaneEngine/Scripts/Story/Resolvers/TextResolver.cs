@@ -80,8 +80,6 @@ namespace KohaneEngine.Scripts.Story.Resolvers
 
         private void TypeAnimation()
         {
-            _binder.speaker.text = _typeWriter.Name;
-            
             var text = _typeWriter.Text.ToString();
             var length = text.Length;
             var duration = length * Constants.TypeAnimationSpeed;
@@ -89,10 +87,11 @@ namespace KohaneEngine.Scripts.Story.Resolvers
 
             var anim = DOTween.To(() => showingCharCount, (x) =>
             {
+                _binder.speaker.text = _typeWriter.Name;
                 showingCharCount = x;
                 _binder.text.text = text[..x];
             }, length, duration).SetEase(Ease.Linear);
-            _animator.AppendTweenAnimation(anim);
+            _animator.JoinAnimation(anim);
         }
     }
 }

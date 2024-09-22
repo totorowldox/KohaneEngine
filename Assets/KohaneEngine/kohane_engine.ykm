@@ -1,42 +1,45 @@
-# 系统设置
--extern waitForClick
--extern wait time=1
--extern canSkip val #true or false(default)
--extern startAsync
--extern endAsync
+# commands starting with __ is builtin functions, not allowed to be used by user
 
-#角色
+# System settings
+-extern waitForClick # (tested) wait for a click
+-extern wait time=1 # (tested) wait for a certain delay
+-extern canSkip val # (tested) true(default) or false
+-extern startAsync # (tested) the next commands will start simultaneously
+-extern endAsync   # (tested) ends that
+
+# Characters
 -extern __charDefine id
 -extern __charDelete id
--extern charSwitch id path
--extern charMove id x=0.0 y=0.0 tween=0 time=0.2
--extern charAlpha id alpha=1.0 tween=0 time=0.2
--extern charScale id x=1.0 y=1.0 tween=0 time=0.2
+-extern charSwitch id path # (tested) switch character image
+-extern charMove id x=0.0 y=0.0 tween=0 time=0.5 # (tested) move character
+-extern charAlpha id alpha=1.0 tween=0 time=0.5 # (tested) set character's alpha value
+-extern charScale id x=1.0 y=1.0 tween=0 time=0.5 # (tested) scale character
 
--macro charSpawn id path x=0.0 y=0.0 sx=1.0 sy=1.0 alpha=1.0 tween=0 time=0.2
+-macro charSpawn id path x=0.0 y=0.0 sx=1.0 sy=1.0 alpha=1.0 tween=0 time=0.5 # (tested) spawn a character
 @__charDefine id
-@startAsync
 @charSwitch id path
+@startAsync
 @charScale id sx sy tween time
 @charMove id x y tween time
 @charAlpha id alpha tween time
 @endAsync
 
--macro charRemove id tween=0 time=0.2
+-macro charRemove id tween=0 time=0.5 # (tested) remove a character
 @charAlpha id 0 tween time
 @__charDelete id
 
-#音频
--extern bgm path volume=1.0 operation="play"#play & stop
+# Audio
+-extern bgm path volume=1.0 operation="play" # play or stop
 -extern sfx path volume=1.0 operation="play"
 
-#背景
--extern __bgSwitch path # switch or remove
+# Background Image
+-extern __bgSwitch path
 -extern __bgRemove
--extern bgAlpha alpha=1.0 tween=0 time=0.2
--extern bgMove x=0 y=0 tween=0 time=0.2
+-extern bgAlpha alpha=1.0 tween=0 time=0.5
+-extern bgMove x=0 y=0 tween=0 time=0.5
+-extern bgScale x=1.0 y=1.0 tween=0 time=0.5
 
--macro bgSwitch path tween=0 time=1 # real time would be 2s !IMPORTANT
+-macro bgSwitch path tween=0 time=1 # switch background image, real time would be 2s !IMPORTANT
 @bgAlpha 0 tween time
 @__bgSwitch path
 @startAsync
@@ -44,76 +47,188 @@
 @bgMove 0 0 tween time
 @endAsync
 
--macro bgRemove tween=0 time=0.2
+-macro bgRemove tween=0 time=0.5 # remove background to black
 @bgAlpha 0 tween time
 @bgMove 0 0 0 0
 @__bgRemove
 
--scene "__entrypoint__"
-@bgm "1.mp3" 1
-@bgSwitch "BG1.png"
-Hello, World!
-@charSpawn "A" "A_001.png"
-A: 你好！
-@charSwitch "A" "A_002.png"
+# UI Control
+-extern blackScreen alpha=0.0 tween=0 time=1 # (tested) set black screen
+-extern showDialogBox alpha=1.0 tween=0 time=1 # (tested) set dialog box's alpha
+
+-macro initScene tween=0 time=1
+@canSkip false
+@blackScreen 1 0 0
+@showDialogBox 0 0 0
+@blackScreen 0 tween time
+@showDialogBox 1 tween time
+@canSkip true
+
+-scene "sakuramoyu_trail"
+@initScene 0 1
+@bgm "咲き誇る日々.mp3"
+@wait 1
 @startAsync
-@charMove "A" 0.5 0 --time 1 --tween 11
-@charScale "A" 1.1 1.1 --time 1 --tween 11
-@charAlpha "A" 0.6 --time 1 --tween 11
+@bgSwitch "BG012_000.png"
+@bgScale 1.3 1.3 0 0
 @endAsync
-@charMove "A" -0.5 0 --time 1 --tween 6
-A: 我可以左右乱动！
-@charRemove "A"
-@bgAlpha 0.5
-A: 背景消失中。。。50%
-@bgAlpha 0.25
-A: 背景消失中。。。75%
-@bgAlpha 0
-A: 背景没啦！！！
-@bgAlpha 0.6
-A: 又回来了60%！
-@bgSwitch "BG2.png"
-A: 换了一张呢！
-以上为示例脚本内容
+@charSpawn "tw" "CHR_千和_悲_制服U.png" 0 -0.5 0.8 0.8 --alpha 0 --time 0
+@charAlpha "tw" 1
+千和: 「那个，打扰了————」
+抱着便当盒的小小学妹来了。
+@charSpawn "ior" "CHR_姫織_基_制服U.png" -0.9 -0.7 0.8 0.8 --alpha 0 --time 0
+@startAsync
+@charAlpha "ior" 1
+@charMove "ior" -0.5 -0.7
+@charMove "tw" 0.3 -0.5
+@bgMove 0.2 0.05
+@endAsync
+姬织: 「————呣！」
+一直看上去困得不行的姬织突然睁开了眼睛
+@charSwitch "ior" "CHR_姫織_喜_制服U.png"
+@charMove "ior" -0.5 -0.75 --tween 6 --time 0.2
+@charMove "ior" -0.5 -0.7 --tween 6 --time 0.2
+姬织: 「好像有美味的气味接近了……」
+@charSwitch "tw" "CHR_千和_喜_制服U.png"
+千和: 「那个，我把饭团带来了。」
+千和扭扭捏捏地站在门口说。
+千和: 「……因为不想让奏前辈到这里来。」
+大雅: 「啊……太好了，谢谢你千和。其实我今天连买午饭的钱都没有了。」
+姬织: 「巧克力，很好吃。」
+姬织莞尔一笑。
+大雅: 「……如你所见。」
+千和: 「欸？」
+大雅: 「本就不多的三十円早就变成巧克力了。不过说到底三十円的预算什么午饭都买不了吧。帮大忙了，谢谢。」
+@startAsync
+@charMove "ior" -1 -0.7
+@charAlpha "ior" 0
+@charMove "tw" 0 -0.5
+@bgMove 0 0
+@endAsync
+@charSwitch "tw" "CHR_千和_基_制服U.png"
+千和: 「欸，啊，这样……」
+千和眨眨眼睛，眼里充满了疑惑。
+@startAsync
+@bgMove 0.05 0.1
+@bgScale 1.4 1.4
+@charMove "tw" -0.3 -0.55
+@charScale "tw" 0.75 0.75
+@charSpawn "tmht" "CHR_智仁_基_制服U.png" 0.3 -0.55 0.8 0.8 --alpha 0 --time 0
+@charAlpha "tmht" 1
+@endAsync
+智仁: 「怎么了大雅，好像坦诚得有些奇怪啊。」
+大雅: 「哪里奇怪了……我一直都很坦诚的啊。真是的。」
+大雅: 「但是，嘛……」
+大雅: 「肚子太饿了，没有力气……连想要惹千和去可爱地发脾气的力气都没有了。可恶，太可惜了。」
+@charSwitch "tw" "CHR_千和_悲_制服U.png"
+千和: 「……看来还是有自觉在把我惹生气的嘛。」
+@startAsync
+@charSwitch "ior" "CHR_姫織_基_制服U.png"
+@charAlpha "tmht" 0
+@charMove "tmht" 1 -0.4
+@charAlpha "ior" 1
+@charMove "ior" -0.5 -0.7
+@charMove "tw" 0.3 -0.5
+@charScale "tw" 0.8 0.8
+@bgMove 0.2 0.05
+@bgScale 1.3 1.3
+@endAsync
+姬织: 「呐呐千和，大雅的事情怎么都无所谓啦。我也想要饭团，可以吗？」
+大雅: 「小姬，你一大早就把便当吃的一点不剩了啊。」
+@charSwitch "ior" "CHR_姫織_喜_制服U.png"
+姬织: 「把看上去超级好吃的炸鸡放在一边是不行的。在热乎乎的时候配上蛋黄酱大口吃掉才是合乎礼节的。」
+眼睛冒着光，口水都快留下来了。
+@startAsync
+@bgMove 0.05 0.1
+@bgScale 1.4 1.4
+@charMove "tw" 0 -0.55
+@charScale "tw" 0.75 0.75
+@charAlpha "tmht" 1
+@charMove "tmht" 0.5 -0.55
+@charMove "ior" -0.75 -0.7
+@endAsync
+智仁: 「炸鸡加上蛋黄酱……热量超高啊。」
+智仁苦笑着。
+我也苦笑着摇了摇头。
+大雅: 「真的啊，这个人这样都吃不胖啊。」
+姬织: 「因为姬织还在发育期啦。」
+她拍着自己平平的胸脯道。
+姬织: 「就像是小鸡一样，一定要多吃一点……多吃一点……」
+@charSwitch "tw" "CHR_千和_喜_制服U.png"
+千和: 「我做了很多饭团，也有学姐的份哦。」
+@charSwitch "ior" "CHR_姫織_基_制服U.png"
+姬织: 「好耶！」
+姬织坐在椅子上，兴奋地踏着地板。
+@charSwitch "ior" "CHR_姫織_喜_制服U.png"
+姬织: 「小千太好了，超超超超爱你的。」
+@charSwitch "tw" "CHR_千和_基_制服U.png"
+千和: 「那个，我可以一起在这里吃午饭吗？」
+大雅: 「啊啊。」
+智仁: 「当然可以。」
+千和作为学妹来我们班吃饭。
+这样的光景都快成为日常了，所以班上的人谁都没有说什么。
+@startAsync
+@charRemove "tw"
+@charRemove "ior"
+@charRemove "tmht"
+@endAsync
+Fin.
+@showDialogBox 0
+@blackScreen 1
 
 
 
 
 
-# Scene: A quiet park at sunset. The sky is painted with hues of orange and pink.
 
-# Alice: It's so peaceful here. I could stay forever.
 
-# Brian: Yeah, it's a nice break from the chaos of the city.
 
-# Alice looks up at the sky, her eyes reflecting the colors of the sunset.
 
-# Alice: Do you remember the first time we came here?
 
-# Brian: How could I forget? You were chasing that squirrel and tripped over your own feet.
 
-# Alice laughs, the sound light and carefree.
 
-# Alice: Hey, that squirrel was fast! But you caught me before I hit the ground.
 
-# Brian smiles, his gaze softening as he watches her.
 
-# Brian: I'll always be there to catch you, Alice.
 
-# A gentle breeze rustles the leaves around them, carrying the scent of blooming flowers.
 
-# Alice: Brian, there's something I've been meaning to tell you.
 
-# Brian: What is it?
 
-# Alice takes a deep breath, her heart pounding in her chest.
 
-# Alice: I... I think I'm falling for you.
 
-# Brian's eyes widen in surprise, but then a warm smile spreads across his face.
 
-# Brian: Funny, I was just about to say the same thing.
 
-# They both laugh, the tension melting away as they realize their feelings are mutual.
-
-# The sun dips below the horizon, casting a golden glow over the park. As the first stars begin to twinkle in the night sky, Alice and Brian share a tender embrace, knowing that this moment marks the beginning of something beautiful.
+# E.G.
+# -scene "__entrypoint__" # define a scene to write scripts
+# @initScene 0 1
+# @canSkip false
+# @bgm "1.mp3" 1
+# @wait 1
+# @startAsync
+# @bgSwitch "BG1.png"
+# Hello, World!
+# @endAsync
+# @charSpawn "A" "A_001.png"
+# A: 你好！
+# @charSwitch "A" "A_002.png"
+# @startAsync
+# @charMove "A" 0.5 0 --time 1 --tween 11
+# @charScale "A" 1.1 1.1 --time 1 --tween 11
+# @charAlpha "A" 0.6 --time 1 --tween 11
+# @endAsync
+# @waitForClick
+# @charMove "A" -0.5 0 --time 1 --tween 6
+# @charSwitch "A" "A_001.png"
+# A: 我可以左右乱动！
+# @canSkip true
+# @charRemove "A"
+# @bgAlpha 0.5
+# A: 背景消失中。。。50%
+# @bgAlpha 0.55
+# A: 背景消失中。。。75%
+# @bgAlpha 0
+# A: 背景没啦！！！
+# @bgAlpha 0.6
+# A: 又回来了60%！
+# @bgSwitch "BG2.png"
+# A: 换了一张呢！
+# 以上为示例脚本内容

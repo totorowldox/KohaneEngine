@@ -51,8 +51,9 @@ namespace KohaneEngine.Scripts
             StoryResolver.Register<CharacterResolver>("__charDefine", "__charDelete", 
                 "charSwitch", "charMove", "charAlpha", "charScale");
             StoryResolver.Register<BackgroundResolver>("__bgSwitch", "__bgRemove", 
-                "bgAlpha", "bgMove");
+                "bgAlpha", "bgMove", "bgScale");
             StoryResolver.Register<EtcResolver>("startAsync", "endAsync", "wait", "waitForClick", "canSkip");
+            StoryResolver.Register<UIResolver>("blackScreen", "showDialogBox");
         }
 
         private void ReadStory()
