@@ -16,7 +16,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         private readonly KohaneBinder _binder;
         private readonly KohaneAnimator _animator;
 
-        private readonly Dictionary<string, Image> _characterImages = new();
+        private readonly Dictionary<string, RawImage> _characterImages = new();
 
         public CharacterResolver(IResourceManager resourceManager, KohaneBinder binder, KohaneAnimator animator)
         {
@@ -38,10 +38,12 @@ namespace KohaneEngine.Scripts.Story.Resolvers
                     _characterImages.Add(id, _binder.CreateCharacterImage());
                     break;
                 case "__charDelete":
-                    if (!_characterImages.Remove(id))
+                    if (!_characterImages.ContainsKey(id))
                     {
-                        return ResolveResult.FailResult("deleting undefined character");
+                        return ResolveResult.FailResult("Deleting undefined character, are you using builtin function???");
                     }
+                    //TODO: Destroy used character or use an object pool
+                    _characterImages.Remove(id);
                     break;
                 case "charSwitch":
                     SetCharacterImage(GetCharacterImage(id), block.GetArg<string>(1));
@@ -51,7 +53,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
                     var ay = block.GetArg<float>(2);
                     var tween = block.GetArg<int>(3);
                     var dur = block.GetArg<float>(4);
-                    _animator.AppendTweenAnimation(GetCharacterImage(id).rectTransform
+                    _animator.AppendAnimation(GetCharacterImage(id).rectTransform
                         .DOAnchorPos(UIUtils.ScriptPositionToCanvasPosition(new Vector2(ax, ay)), dur)
                         .SetEase((Ease) tween));
                     break;
@@ -59,7 +61,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
                     var alpha = block.GetArg<float>(1);
                     tween = block.GetArg<int>(2);
                     dur = block.GetArg<float>(3);
-                    _animator.AppendTweenAnimation(GetCharacterImage(id)
+                    _animator.AppendAnimation(GetCharacterImage(id)
                         .DOFade(alpha, dur).SetEase((Ease) tween));
                     break;
                 case "charScale":
@@ -67,14 +69,14 @@ namespace KohaneEngine.Scripts.Story.Resolvers
                     ay = block.GetArg<float>(2);
                     tween = block.GetArg<int>(3);
                     dur = block.GetArg<float>(4);
-                    _animator.AppendTweenAnimation(GetCharacterImage(id).rectTransform
-                        .DOScale(new Vector2(ax, ay), dur).SetEase((Ease) tween));
+                    _animator.AppendAnimation(GetCharacterImage(id).rectTransform
+                        .DOScale(new Vector3(ax, ay, 1), dur).SetEase((Ease) tween));
                     break;
             }
             return ResolveResult.SuccessResult();
         }
 
-        private Image GetCharacterImage(string id)
+        private RawImage GetCharacterImage(string id)
         {
             if (!_characterImages.TryGetValue(id, out var characterImage))
             {
@@ -83,14 +85,48 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return characterImage;
         }
 
-        public async void SetCharacterImage(Image characterImage, string path)
+        //TODO: implement async loading
+        private void SetCharacterImage(RawImage characterImage, string path)
         {
-            var nextImage =
-                await _resourceManager.LoadResourceAsync<Sprite>(string.Format(Constants.CharacterPath,
+            var nextImage = _resourceManager.LoadResource<Texture>(string.Format(Constants.CharacterPath,
                     path));
+            if (!characterImage.texture)
+            {
+                characterImage.texture = nextImage;
+                characterImage.SetNativeSize();
+                characterImage.transform.GetChild(0).GetComponent<RawImage>().color = new Color(1, 1, 1, 0);
+                //characterImage.material.SetFloat(Progress, 0);
+                return;
+            }
+
+            var transitionImage = characterImage.transform.GetChild(0).GetComponent<RawImage>();
+
+            _animator.AppendCallback(() =>
+            {
+                transitionImage.texture = nextImage;
+                transitionImage.SetNativeSize();
+            }, true);
             
-            characterImage.sprite = nextImage;
-            characterImage.SetNativeSize();
+            // _animator.AppendTweenAnimation(characterImage.DOFade(0,
+            //     Constants.CharacterCrossFadeDuration), true);
+            // _animator.JoinTweenAnimation(transitionImage.DOFade(1,
+            //     Constants.CharacterCrossFadeDuration));
+            var tempAlpha = 0f;
+            var targetAlpha = characterImage.color.a;
+            _animator.AppendAnimation(DOTween.To(() => tempAlpha, (x) =>
+            {
+                tempAlpha = x;
+                characterImage.color = new Color(1, 1, 1, targetAlpha - x);
+                transitionImage.color = new Color(1, 1, 1, x);
+            }, targetAlpha, Constants.CharacterCrossFadeDuration), true);
+            
+            _animator.AppendCallback(() =>
+            {
+                characterImage.texture = nextImage;
+                characterImage.SetNativeSize();
+                characterImage.color = Color.white;
+                transitionImage.color = new Color(1, 1, 1, 0);
+            }, true);
         }
     }
 }

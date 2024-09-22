@@ -1,4 +1,5 @@
-﻿using KohaneEngine.Scripts.ResourceManager;
+﻿using KohaneEngine.Scripts.Framework;
+using KohaneEngine.Scripts.ResourceManager;
 using KohaneEngine.Scripts.Structure;
 using KohaneEngine.Scripts.Utils;
 using UnityEngine;
@@ -9,10 +10,12 @@ namespace KohaneEngine.Scripts.Story.Resolvers
     {
         private readonly AudioSource _bgmSource;
         private readonly IResourceManager _resourceManager;
+        private readonly KohaneAnimator _animator;
         
-        public AudioResolver(IResourceManager resourceManager, KohaneBinder binder)
+        public AudioResolver(IResourceManager resourceManager, KohaneBinder binder, KohaneAnimator animator)
         {
             _resourceManager = resourceManager;
+            _animator = animator;
             _bgmSource = binder.bgmSource;
             _bgmSource.playOnAwake = false;
             _bgmSource.loop = true;
@@ -29,18 +32,15 @@ namespace KohaneEngine.Scripts.Story.Resolvers
                 case "bgm":
                     if (op == "stop")
                     {
-                        Debug.Log("[Audio] Stopping BGM");
-                        StopBGM();
+                        _animator.AppendCallback(StopBGM);
                     }
                     else
                     {
-                        PlayBGM(audio, volume);
-                        Debug.Log($"[Audio] Playing BGM {audio}");
+                        _animator.AppendCallback(() => PlayBGM(audio, volume));
                     }
                     break;
                 case "sfx":
-                    Debug.Log($"[Audio] Playing SFX {audio}");
-                    PlayFX(audio, volume);
+                    _animator.AppendCallback(() => PlayFX(audio, volume));
                     break;
             }
 
@@ -52,17 +52,20 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             _bgmSource.volume = volume;
             _bgmSource.clip = await _resourceManager.LoadResourceAsync<AudioClip>(string.Format(Constants.BGMPath, id));
             _bgmSource.Play();
+            Debug.Log($"[Audio] Playing BGM {id}");
         }
 
         private void StopBGM()
         {
             _bgmSource.Stop();
+            Debug.Log("[Audio] Stopping BGM");
         }
 
         private async void PlayFX(string id, float volume = 1)
         {
             var sfx = await _resourceManager.LoadResourceAsync<AudioClip>(string.Format(Constants.SfxPath, id));
             AudioSource.PlayClipAtPoint(sfx, Camera.main!.transform.position, volume);
+            Debug.Log($"[Audio] Playing SFX {id}");
         }
     }
 }

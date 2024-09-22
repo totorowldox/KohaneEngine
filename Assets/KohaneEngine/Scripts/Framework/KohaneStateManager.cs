@@ -57,14 +57,14 @@ namespace KohaneEngine.Scripts.Framework
             return true;
         }
 
-        public bool IsInState(KohaneState state) => CurrentState.HasFlag(state);
+        public bool IsInState(KohaneState state) => CurrentState == state;
         
         public bool HasFlag(KohaneFlag flag) => CurrentFlags.HasFlag(flag);
 
-        private bool CanResolve() => (IsInState(KohaneState.Ready) || IsInState(KohaneState.None)) && 
+        public bool CanResolve() => (IsInState(KohaneState.Ready) || IsInState(KohaneState.None)) && 
                                      !HasFlag(KohaneFlag.InSystem);
 
-        private bool CanSkip() => !HasFlag(KohaneFlag.CannotSkip) &&
+        public bool CanSkip() => !HasFlag(KohaneFlag.CannotSkip) &&
                                   !HasFlag(KohaneFlag.InSystem);
     }
 

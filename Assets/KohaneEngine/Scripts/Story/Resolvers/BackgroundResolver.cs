@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using DG.Tweening;
+﻿using DG.Tweening;
 using KohaneEngine.Scripts.Framework;
 using KohaneEngine.Scripts.ResourceManager;
 using KohaneEngine.Scripts.Structure;
@@ -37,7 +36,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
                     var alpha = block.GetArg<float>(0);
                     var tween = block.GetArg<int>(1);
                     var dur = block.GetArg<float>(2);
-                    _animator.AppendTweenAnimation(_backgroundImage
+                    _animator.AppendAnimation(_backgroundImage
                         .DOFade(alpha, dur).SetEase((Ease) tween));
                     break;
                 case "bgMove":
@@ -45,15 +44,24 @@ namespace KohaneEngine.Scripts.Story.Resolvers
                     var ay = block.GetArg<float>(1);
                     tween = block.GetArg<int>(2);
                     dur = block.GetArg<float>(3);
-                    _animator.AppendTweenAnimation(_backgroundImage.rectTransform
+                    _animator.AppendAnimation(_backgroundImage.rectTransform
                         .DOAnchorPos(UIUtils.ScriptPositionToCanvasPosition(new Vector2(ax, ay)), dur)
+                        .SetEase((Ease) tween));
+                    break;
+                case "bgScale":
+                    ax = block.GetArg<float>(0);
+                    ay = block.GetArg<float>(1);
+                    tween = block.GetArg<int>(2);
+                    dur = block.GetArg<float>(3);
+                    _animator.AppendAnimation(_backgroundImage.rectTransform
+                        .DOScale(new Vector3(ax, ay, 1), dur)
                         .SetEase((Ease) tween));
                     break;
             }
             return ResolveResult.SuccessResult();
         }
-        
-        public async void SetBackgroundImage(string path)
+
+        private async void SetBackgroundImage(string path)
         {
             var nextImage =
                 await _resourceManager.LoadResourceAsync<Sprite>(string.Format(Constants.BackgroundPath,
