@@ -19,31 +19,31 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             _bgmSource = binder.bgmSource;
             _bgmSource.playOnAwake = false;
             _bgmSource.loop = true;
+            Functions.Add("sfx", SoundEffect);
+            Functions.Add("bgm", BGM);
         }
-        
-        public override ResolveResult Resolve(Block block)
+
+        private ResolveResult SoundEffect(Block block)
+        {
+            var audio = block.GetArg<string>(0);
+            var volume = block.GetArg<float>(1);
+            _animator.AppendCallback(() => PlayFX(audio, volume));
+            return ResolveResult.SuccessResult();
+        }
+
+        private ResolveResult BGM(Block block)
         {
             var audio = block.GetArg<string>(0);
             var volume = block.GetArg<float>(1);
             var op = block.GetArg<string>(2);
-            
-            switch (block.type)
+            if (op == "stop")
             {
-                case "bgm":
-                    if (op == "stop")
-                    {
-                        _animator.AppendCallback(StopBGM);
-                    }
-                    else
-                    {
-                        _animator.AppendCallback(() => PlayBGM(audio, volume));
-                    }
-                    break;
-                case "sfx":
-                    _animator.AppendCallback(() => PlayFX(audio, volume));
-                    break;
+                _animator.AppendCallback(StopBGM);
             }
-
+            else
+            {
+                _animator.AppendCallback(() => PlayBGM(audio, volume));
+            }
             return ResolveResult.SuccessResult();
         }
 
