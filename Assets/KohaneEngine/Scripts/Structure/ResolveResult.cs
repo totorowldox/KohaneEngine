@@ -2,7 +2,7 @@
 {
     public class ResolveResult
     {
-        public bool Success = false;
+        public bool Success;
         public string Reason;
 
         public static ResolveResult SuccessResult(string reason = "") => new()

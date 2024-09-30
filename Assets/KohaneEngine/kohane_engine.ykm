@@ -6,6 +6,7 @@
 -extern canSkip val # (tested) true(default) or false
 -extern startAsync # (tested) the next commands will start simultaneously
 -extern endAsync   # (tested) ends that
+-extern at time # start next animation at (time) secs of current sequence(before text or waitForClick)
 
 # Characters
 -extern __charDefine id
@@ -66,7 +67,7 @@
 
 -scene "sakuramoyu_trail"
 @initScene 0 1
-@bgm "咲き誇る日々.mp3"
+#@bgm "咲き誇る日々.mp3"
 @wait 1
 @startAsync
 @bgSwitch "BG012_000.png"
@@ -86,7 +87,9 @@
 姬织: 「————呣！」
 一直看上去困得不行的姬织突然睁开了眼睛
 @charSwitch "ior" "CHR_姫織_喜_制服U.png"
+@at 0
 @charMove "ior" -0.5 -0.75 --tween 6 --time 0.2
+@at 0.2
 @charMove "ior" -0.5 -0.7 --tween 6 --time 0.2
 姬织: 「好像有美味的气味接近了……」
 @charSwitch "tw" "CHR_千和_喜_制服U.png"

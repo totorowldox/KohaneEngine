@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using DG.Tweening;
-using UnityEngine;
 
 namespace KohaneEngine.Scripts.Framework
 {
@@ -16,6 +15,13 @@ namespace KohaneEngine.Scripts.Framework
         private KohaneStateManager _stateManager = null;
         private KohaneStateManager StateManager => _stateManager ??= KohaneEngine.Resolver.Resolve<KohaneStateManager>();
         private bool _isAsync = false;
+
+        private float _insertAt = float.NaN;
+
+        public void InsertNextAnimationAt(float time)
+        {
+            _insertAt = time;
+        }
 
         public void AppendAnimation(Tween tween, bool forceAppend = false)
         {
@@ -34,6 +40,12 @@ namespace KohaneEngine.Scripts.Framework
             }
             else
             {
+                if (!float.IsNaN(_insertAt))
+                {
+                    _tweenSequence.Insert(_insertAt, tween);
+                    _insertAt = float.NaN;
+                    return;
+                }
                 _isAsync = forceAppend && _isAsync;
                 _tweenSequence.Append(tween);
             }
@@ -68,6 +80,12 @@ namespace KohaneEngine.Scripts.Framework
             }
             else
             {
+                if (!float.IsNaN(_insertAt))
+                {
+                    _tweenSequence.InsertCallback(_insertAt, wrappedCallback);
+                    _insertAt = float.NaN;
+                    return;
+                }
                 _isAsync = forceAppend && _isAsync;
                 _tweenSequence.AppendCallback(wrappedCallback);
             }

@@ -1,23 +1,26 @@
 ﻿using System;
 using KohaneEngine.Scripts.Framework;
 using KohaneEngine.Scripts.Structure;
+using KohaneEngine.Scripts.Utils;
 
 namespace KohaneEngine.Scripts.Story
 {
     public class KohaneStoryManager
     {
         private static StoryResolver StoryResolver => KohaneEngine.StoryResolver;
-        
-        private int _currentSceneIndex;
-        private int _currentBlockIndex;
+
         private KohaneStruct _story;
         
         private readonly KohaneStateManager _stateManager;
         private readonly KohaneAnimator _animator;
 
-        private Scene CurrentScene => _story.scenes[_currentSceneIndex];
-        private Block CurrentBlock => _story.scenes[_currentSceneIndex].blocks[_currentBlockIndex];
-        
+        private Scene CurrentScene => _story.scenes[CurrentSceneIndex];
+        private Block CurrentBlock => _story.scenes[CurrentSceneIndex].blocks[CurrentBlockIndex];
+
+        public int CurrentSceneIndex { get; private set; }
+
+        public int CurrentBlockIndex { get; private set; }
+
         public KohaneStoryManager(KohaneStateManager stateManager, KohaneAnimator animator)
         {
             _stateManager = stateManager;
@@ -49,21 +52,31 @@ namespace KohaneEngine.Scripts.Story
         private void ToNextBlock()
         {
             // Next block
-            if (CurrentScene.blocks.Count > _currentBlockIndex + 1)
+            if (CurrentScene.blocks.Count > CurrentBlockIndex + 1)
             {
-                _currentBlockIndex++;
+                CurrentBlockIndex++;
                 return;
             }
 
             // Next scene
-            if (_story.scenes.Count > _currentSceneIndex + 1)
+            if (_story.scenes.Count > CurrentSceneIndex + 1)
             {
-                _currentSceneIndex++;
-                _currentBlockIndex = 0;
+                CurrentSceneIndex++;
+                CurrentBlockIndex = 0;
                 return;
             }
 
             throw new Exception("Reach end of story");
+        }
+
+        public void JumpToLine(int sceneIndex, int blockLine)
+        {
+            CurrentSceneIndex = sceneIndex;
+            while (CurrentBlockIndex < blockLine)
+            {
+                ResolveNext();
+                _animator.InterruptAnimation();
+            }
         }
     }
 }
