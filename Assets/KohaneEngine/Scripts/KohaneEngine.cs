@@ -16,14 +16,14 @@ namespace KohaneEngine.Scripts
         public static KohaneEngine Instance;
 
         [SerializeField] private TextAsset storyAsset;
-        
+
         private void Awake()
         {
             Instance = this;
             Resolver = new DependencyResolver();
             StoryResolver = new StoryResolver();
             InitializeResolvers();
-            
+
             // Test
             ReadStory();
         }
@@ -36,23 +36,24 @@ namespace KohaneEngine.Scripts
             Resolver.Register<KohaneStoryManager>();
             Resolver.Register<KohaneAutoPlayManager>();
             Resolver.Register<KohaneAnimator>();
-            Resolver.Register<IKohaneRuntimeStructSerializer, YukimiJsonSerializer>();
             Resolver.Register<IStoryReader, TextAssetReader>();
             Resolver.Register<IResourceManager, LegacyResourceManager>();
-            
+
             UseYukimiScript();
         }
 
         private void UseYukimiScript()
         {
+            Resolver.Register<IKohaneRuntimeStructSerializer, YukimiJsonSerializer>();
+            
             // Register types
             StoryResolver.Register<AudioResolver>("bgm", "sfx");
             StoryResolver.Register<TextResolver>("__text_begin", "__text_type", "__text_end");
-            StoryResolver.Register<CharacterResolver>("__charDefine", "__charDelete", 
+            StoryResolver.Register<CharacterResolver>("__charDefine", "__charDelete",
                 "charSwitch", "charMove", "charAlpha", "charScale");
-            StoryResolver.Register<BackgroundResolver>("__bgSwitch", "__bgRemove", 
+            StoryResolver.Register<BackgroundResolver>("__bgSwitch", "__bgRemove",
                 "bgAlpha", "bgMove", "bgScale");
-            StoryResolver.Register<EtcResolver>("startAsync", "endAsync", "wait", "waitForClick", "canSkip");
+            StoryResolver.Register<EtcResolver>("startAsync", "endAsync", "wait", "waitForClick", "canSkip", "at");
             StoryResolver.Register<UIResolver>("blackScreen", "showDialogBox");
         }
 

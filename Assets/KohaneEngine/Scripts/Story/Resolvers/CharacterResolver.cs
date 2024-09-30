@@ -23,56 +23,77 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             _resourceManager = resourceManager;
             _binder = binder;
             _animator = animator;
+            Functions.Add("__charDefine", CharDefine);
+            Functions.Add("__charDelete", CharDelete);
+            Functions.Add("charSwitch", CharSwitch);
+            Functions.Add("charMove", CharMove);
+            Functions.Add("charScale", CharScale);
+            Functions.Add("charAlpha", CharAlpha);
         }
-        
-        public override ResolveResult Resolve(Block block)
+
+        private ResolveResult CharScale(Block block)
         {
             var id = block.GetArg<string>(0);
-            switch (block.type)
+            var ax = block.GetArg<float>(1);
+            var ay = block.GetArg<float>(2);
+            var tween = block.GetArg<int>(3);
+            var dur = block.GetArg<float>(4);
+            _animator.AppendAnimation(GetCharacterImage(id).rectTransform
+                .DOScale(new Vector3(ax, ay, 1), dur).SetEase((Ease) tween));
+            return ResolveResult.SuccessResult();
+        }
+
+        private ResolveResult CharAlpha(Block block)
+        {
+            var id = block.GetArg<string>(0);
+            var alpha = block.GetArg<float>(1);
+            var tween = block.GetArg<int>(2);
+            var dur = block.GetArg<float>(3);
+            _animator.AppendAnimation(GetCharacterImage(id)
+                .DOFade(alpha, dur).SetEase((Ease) tween));
+            return ResolveResult.SuccessResult();
+        }
+
+        private ResolveResult CharMove(Block block)
+        {
+            var id = block.GetArg<string>(0);
+            var ax = block.GetArg<float>(1);
+            var ay = block.GetArg<float>(2);
+            var tween = block.GetArg<int>(3);
+            var dur = block.GetArg<float>(4);
+            _animator.AppendAnimation(GetCharacterImage(id).rectTransform
+                .DOAnchorPos(UIUtils.ScriptPositionToCanvasPosition(new Vector2(ax, ay)), dur)
+                .SetEase((Ease) tween));
+            return ResolveResult.SuccessResult();
+        }
+
+        private ResolveResult CharSwitch(Block block)
+        {
+            var id = block.GetArg<string>(0);
+            SetCharacterImage(GetCharacterImage(id), block.GetArg<string>(1));
+            return ResolveResult.SuccessResult();
+        }
+
+        //TODO: Destroy used character or use an object pool
+        private ResolveResult CharDelete(Block block)
+        {
+            var id = block.GetArg<string>(0);
+            if (!_characterImages.ContainsKey(id))
             {
-                case "__charDefine":
-                    if (_characterImages.ContainsKey(id))
-                    {
-                        return ResolveResult.FailResult();
-                    }
-                    _characterImages.Add(id, _binder.CreateCharacterImage());
-                    break;
-                case "__charDelete":
-                    if (!_characterImages.ContainsKey(id))
-                    {
-                        return ResolveResult.FailResult("Deleting undefined character, are you using builtin function???");
-                    }
-                    //TODO: Destroy used character or use an object pool
-                    _characterImages.Remove(id);
-                    break;
-                case "charSwitch":
-                    SetCharacterImage(GetCharacterImage(id), block.GetArg<string>(1));
-                    break;
-                case "charMove":
-                    var ax = block.GetArg<float>(1);
-                    var ay = block.GetArg<float>(2);
-                    var tween = block.GetArg<int>(3);
-                    var dur = block.GetArg<float>(4);
-                    _animator.AppendAnimation(GetCharacterImage(id).rectTransform
-                        .DOAnchorPos(UIUtils.ScriptPositionToCanvasPosition(new Vector2(ax, ay)), dur)
-                        .SetEase((Ease) tween));
-                    break;
-                case "charAlpha":
-                    var alpha = block.GetArg<float>(1);
-                    tween = block.GetArg<int>(2);
-                    dur = block.GetArg<float>(3);
-                    _animator.AppendAnimation(GetCharacterImage(id)
-                        .DOFade(alpha, dur).SetEase((Ease) tween));
-                    break;
-                case "charScale":
-                    ax = block.GetArg<float>(1);
-                    ay = block.GetArg<float>(2);
-                    tween = block.GetArg<int>(3);
-                    dur = block.GetArg<float>(4);
-                    _animator.AppendAnimation(GetCharacterImage(id).rectTransform
-                        .DOScale(new Vector3(ax, ay, 1), dur).SetEase((Ease) tween));
-                    break;
+                return ResolveResult.FailResult("[CharacterResolver] Deleting undefined character, are you using builtin function???");
             }
+            _characterImages.Remove(id);
+            return ResolveResult.SuccessResult();
+        }
+
+        private ResolveResult CharDefine(Block block)
+        {
+            var id = block.GetArg<string>(0);
+            if (_characterImages.ContainsKey(id))
+            {
+                return ResolveResult.FailResult("[CharacterResolver] Character already defined, are you using builtin function???");
+            }
+            _characterImages.Add(id, _binder.CreateCharacterImage());
             return ResolveResult.SuccessResult();
         }
 

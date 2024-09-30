@@ -22,25 +22,25 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             _blackScreen = binder.blackScreenImage;
             _dialogCanvas = binder.dialogCanvasGroup;
             _animator = animator;
+            Functions.Add("showDialogBox", ShowDialogBox);
+            Functions.Add("blackScreen", BlackScreen);
         }
-        
-        public override ResolveResult Resolve(Block block)
+
+        private ResolveResult ShowDialogBox(Block block)
         {
-            switch (block.type)
-            {
-                case "blackScreen":
-                    var alpha = block.GetArg<float>(0);
-                    var tween = block.GetArg<int>(1);
-                    var dur = block.GetArg<float>(2);
-                    _animator.AppendAnimation(_blackScreen.DOFade(alpha, dur).SetEase((Ease) tween));
-                    break;
-                case "showDialogBox":
-                    alpha = block.GetArg<float>(0);
-                    tween = block.GetArg<int>(1);
-                    dur = block.GetArg<float>(2);
-                    _animator.AppendAnimation(_dialogCanvas.DOFade(alpha, dur).SetEase((Ease) tween));
-                    break;
-            }
+            var alpha = block.GetArg<float>(0);
+            var tween = block.GetArg<int>(1);
+            var dur = block.GetArg<float>(2);
+            _animator.AppendAnimation(_dialogCanvas.DOFade(alpha, dur).SetEase((Ease) tween));
+            return ResolveResult.SuccessResult();
+        }
+
+        private ResolveResult BlackScreen(Block block)
+        {
+            var alpha = block.GetArg<float>(0);
+            var tween = block.GetArg<int>(1);
+            var dur = block.GetArg<float>(2);
+            _animator.AppendAnimation(_blackScreen.DOFade(alpha, dur).SetEase((Ease) tween));
             return ResolveResult.SuccessResult();
         }
     }

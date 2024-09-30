@@ -48,7 +48,11 @@ namespace KohaneEngine.Scripts.Framework
             }
             
             var resolver = KohaneEngine.Resolver.ResolveByType(resolverType) as Resolver;
-            resolver!.Resolve(block);
+            var ret = resolver!.Resolve(block);
+            if (!ret.Success)
+            {
+                Debug.LogError(ret.Reason);
+            }
         }
     }
 }
