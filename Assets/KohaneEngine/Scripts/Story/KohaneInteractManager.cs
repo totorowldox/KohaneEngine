@@ -45,7 +45,6 @@ namespace KohaneEngine.Scripts.Story
             // Interrupt animation when input is pressed
             else if (_stateManager.CanSkip() &&_stateManager.HasFlag(KohaneFlag.Animating))
             {
-                Debug.Log("!!Interrupt animation");
                 _animator.InterruptAnimation();
             }
             // Then we can perform next step

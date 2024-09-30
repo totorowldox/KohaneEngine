@@ -87,5 +87,6 @@ namespace KohaneEngine.Scripts.Framework
         AsyncResolving = 1 << 4,
         CannotSkip = 1 << 5,
         Animating = 1 << 6,
+        Reading = 1 << 7
     }
 }

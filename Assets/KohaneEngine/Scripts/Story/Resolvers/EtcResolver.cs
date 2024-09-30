@@ -18,6 +18,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             Functions.Add("wait", Wait);
             Functions.Add("waitForClick", WaitForClick);
             Functions.Add("canSkip", CanSkip);
+            Functions.Add("at", InsertAnimationAt);
         }
 
         private ResolveResult CanSkip(Block block)
@@ -55,6 +56,12 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         private ResolveResult StartAsync(Block block)
         {
             _stateManager.AddFlag(KohaneFlag.AsyncResolving);
+            return ResolveResult.SuccessResult();
+        }
+
+        private ResolveResult InsertAnimationAt(Block block)
+        {
+            _animator.InsertNextAnimationAt(block.GetArg<float>(0));
             return ResolveResult.SuccessResult();
         }
     }
