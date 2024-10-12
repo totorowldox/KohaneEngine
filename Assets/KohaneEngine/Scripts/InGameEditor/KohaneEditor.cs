@@ -21,8 +21,8 @@ namespace KohaneEngine.Scripts.InGameEditor
         [SerializeField] private Toggle jumpToCurrentLineToggle;
         [SerializeField] private Text outputLog;
         
-        private static string _ykmcPath = "";
-        private static string _scriptPath = "";
+        private static string _ykmcPath = "G:\\UnityProjects\\KohaneEngine\\Assets\\KohaneEngine\\ykmc.exe";
+        private static string _scriptPath = "G:\\UnityProjects\\KohaneEngine\\Assets\\KohaneEngine\\kohane_engine.ykm";
         private bool _isExpanded;
 
         private void Start()
