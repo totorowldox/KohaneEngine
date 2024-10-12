@@ -67,7 +67,7 @@
 
 -scene "sakuramoyu_trail"
 @initScene 0 1
-#@bgm "咲き誇る日々.mp3"
+@bgm "咲き誇る日々.mp3"
 @wait 1
 @startAsync
 @bgSwitch "BG012_000.png"

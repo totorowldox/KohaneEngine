@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace KohaneEngine.Scripts.ResourceManager
 {
+    //TODO: implement deferred loading
     public interface IResourceManager
     {
         /// <summary>

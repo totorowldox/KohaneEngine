@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using KohaneEngine.Scripts.Utils;
 using UnityEngine;
 
@@ -6,6 +7,8 @@ namespace KohaneEngine.Scripts.ResourceManager
 {
     public class LegacyResourceManager : IResourceManager
     {
+        private Dictionary<string, object> _resources;
+        
         public T LoadResource<T>(string path) where T : Object
         {
             path = path.WithoutExtension();
