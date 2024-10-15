@@ -1,4 +1,5 @@
 ﻿using KohaneEngine.Scripts.Story;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,8 +12,8 @@ namespace KohaneEngine.Scripts
         
         [Space(10)]
         [Header("Dialog")]
-        public Text speaker;
-        public Text text;
+        public TMP_Text speaker;
+        public TMP_Text text;
         
         [Space(10)]
         [Header("Character")]

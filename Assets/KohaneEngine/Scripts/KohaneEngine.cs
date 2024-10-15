@@ -1,4 +1,5 @@
 ﻿using KohaneEngine.Scripts.Framework;
+using KohaneEngine.Scripts.Graphic.TypewriterAnimation;
 using KohaneEngine.Scripts.ResourceManager;
 using KohaneEngine.Scripts.Serializer;
 using KohaneEngine.Scripts.Story;
@@ -47,6 +48,7 @@ namespace KohaneEngine.Scripts
                 Resolver.Register<IStoryReader, LocalFileReader>();
             }
             Resolver.Register<IResourceManager, LegacyResourceManager>();
+            Resolver.Register<TypewriterAnimation, FadeDownTypewriterAnimation>();
 
             UseYukimiScript();
         }

@@ -2,8 +2,10 @@
 using System.Text;
 using DG.Tweening;
 using KohaneEngine.Scripts.Framework;
+using KohaneEngine.Scripts.Graphic.TypewriterAnimation;
 using KohaneEngine.Scripts.Structure;
 using KohaneEngine.Scripts.Utils;
+using UnityEngine;
 
 namespace KohaneEngine.Scripts.Story.Resolvers
 {
@@ -27,12 +29,14 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         private readonly KohaneStateManager _stateManager;
         private readonly KohaneAnimator _animator;
         private readonly TypeWriter _typeWriter;
+        private readonly TypewriterAnimation _textAnimator;
         
-        public TextResolver(KohaneBinder binder, KohaneStateManager stateManager, KohaneAnimator animator)
+        public TextResolver(KohaneBinder binder, KohaneStateManager stateManager, KohaneAnimator animator, TypewriterAnimation textAnimator)
         {
             _binder = binder;
             _stateManager = stateManager;
             _animator = animator;
+            _textAnimator = textAnimator;
             _typeWriter = new TypeWriter();
             Functions.Add("__text_begin", TextBegin);
             Functions.Add("__text_type", TextType);
@@ -77,17 +81,18 @@ namespace KohaneEngine.Scripts.Story.Resolvers
 
         private void TypeAnimation()
         {
+            var phase = 0f;
             var text = _typeWriter.Text.ToString();
-            var length = text.Length;
-            var duration = length * Constants.TypeAnimationSpeed;
-            var showingCharCount = 0;
-
-            var anim = DOTween.To(() => showingCharCount, (x) =>
+            var duration = _textAnimator.GetDuration(text);
+            _animator.AppendCallback(() =>
             {
-                _binder.speaker.text = _typeWriter.Name;
-                showingCharCount = x;
-                _binder.text.text = text.AsSpan(0, x).ToString();
-            }, length, duration).SetEase(Ease.Linear);
+                _textAnimator.InitializeAnimation(_typeWriter.Name, text);
+            });
+            var anim = DOTween.To(() => phase, (x) =>
+            {
+                phase = x;
+                _textAnimator.UpdateAnimation(phase);
+            }, duration, duration).SetEase(Ease.Linear);
             _animator.JoinAnimation(anim);
         }
     }
