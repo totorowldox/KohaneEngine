@@ -85,7 +85,7 @@
 @bgMove 0.2 0.05
 @endAsync
 姬织: 「————呣！」
-一直看上去困得不行的姬织突然睁开了眼睛
+一直看上去困得不行的姬织突然睁开了眼睛。
 @charSwitch "ior" "CHR_姫織_喜_制服U.png"
 @at 0
 @charMove "ior" -0.5 -0.75 --tween 6 --time 0.2
