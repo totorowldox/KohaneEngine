@@ -5,8 +5,8 @@
 -extern wait time=1 # (tested) wait for a certain delay
 -extern canSkip val # (tested) true(default) or false
 -extern startAsync # (tested) the next commands will start simultaneously
--extern endAsync   # (tested) ends that
--extern at time # start next animation at (time) secs of current sequence(before text or waitForClick)
+-extern endAsync   # (tested) end that
+-extern at time # (tested) start next animation at (time) secs of current sequence(before text or waitForClick)
 
 # Characters
 -extern __charDefine id
@@ -29,6 +29,28 @@
 @charAlpha id 0 tween time
 @__charDelete id
 
+# Images
+-extern __imgDefine id layer
+-extern __imgDelete id
+-extern imgSwitch id path # (untested) switch image (should be the same size)
+-extern imgMove id x=0.0 y=0.0 tween=0 time=0.5 # (untested) move image
+-extern imgAlpha id alpha=1.0 tween=0 time=0.5 # (untested) set alpha value
+-extern imgScale id x=1.0 y=1.0 tween=0 time=0.5 # (untested) scale image
+
+-macro imgSpawn id path layer=0 x=0.0 y=0.0 sx=1.0 sy=1.0 alpha=1.0 tween=0 time=0.5 # (untested) spawn a image
+@__imgDefine id layer
+@imgSwitch id path
+@startAsync
+@imgScale id sx sy tween time
+@imgMove id x y tween time
+@imgAlpha id alpha tween time
+@endAsync
+
+-macro imgRemove id tween=0 time=0.5 # (untested) remove a image
+@imgAlpha id 0 tween time
+@__imgDelete id
+
+
 # Audio
 -extern bgm path volume=1.0 operation="play" # play or stop
 -extern sfx path volume=1.0 operation="play"
@@ -40,7 +62,7 @@
 -extern bgMove x=0 y=0 tween=0 time=0.5
 -extern bgScale x=1.0 y=1.0 tween=0 time=0.5
 
--macro bgSwitch path tween=0 time=1 # switch background image, real time would be 2s !IMPORTANT
+-macro bgSwitch path tween=0 time=1 # (tested) switch background image, real time would be 2s !IMPORTANT
 @bgAlpha 0 tween time
 @__bgSwitch path
 @startAsync
@@ -48,7 +70,7 @@
 @bgMove 0 0 tween time
 @endAsync
 
--macro bgRemove tween=0 time=0.5 # remove background to black
+-macro bgRemove tween=0 time=0.5 # (tested) remove background to black
 @bgAlpha 0 tween time
 @bgMove 0 0 0 0
 @__bgRemove

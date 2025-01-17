@@ -19,6 +19,11 @@ namespace KohaneEngine.Scripts
         [Header("Character")]
         public RawImage characterPrototype;
         public RectTransform characterParentTransform;
+        
+        [Space(10)]
+        [Header("Image")]
+        public RawImage imagePrototype;
+        public RectTransform imageParentTransform;
 
 
         [Space(10)]
@@ -42,5 +47,7 @@ namespace KohaneEngine.Scripts
         }
 
         public RawImage CreateCharacterImage() => Instantiate(characterPrototype, characterParentTransform);
+        
+        public RawImage CreateImage() => Instantiate(imagePrototype, imageParentTransform);
     }
 }

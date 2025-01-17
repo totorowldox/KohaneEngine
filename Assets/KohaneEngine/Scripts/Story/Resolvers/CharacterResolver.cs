@@ -101,7 +101,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         {
             if (!_characterImages.TryGetValue(id, out var characterImage))
             {
-                throw new InvalidOperationException("Invalid character id, are you using builtin function???");
+                throw new InvalidOperationException("[CharacterResolver] Invalid character id, are you using builtin function???");
             }
             return characterImage;
         }
@@ -139,7 +139,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
                 tempAlpha = x;
                 characterImage.color = new Color(1, 1, 1, targetAlpha - x);
                 transitionImage.color = new Color(1, 1, 1, x);
-            }, targetAlpha, Constants.CharacterCrossFadeDuration), true);
+            }, targetAlpha, Constants.CrossFadeDuration), true);
             
             _animator.AppendCallback(() =>
             {

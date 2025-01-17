@@ -10,15 +10,14 @@ namespace KohaneEngine.Scripts
     {
         public const string BGMPath = "KohaneEngine/BGM/{0}";
         public const string SfxPath = "KohaneEngine/SFX/{0}";
-
         public const string CharacterPath = "KohaneEngine/Character/{0}";
-        
+        public const string ImagePath = "KohaneEngine/Image/{0}";
         public const string BackgroundPath = "KohaneEngine/Background/{0}";
 
         public const float CanvasWidth = 1920;
         public const float CanvasHeight = 1080;
 
-        public const float CharacterCrossFadeDuration = 0.5f;
+        public const float CrossFadeDuration = 0.5f;
         
         // Delay per character
         public const float TypeAnimationSpeed = 0.02f;
