@@ -68,6 +68,7 @@ namespace KohaneEngine.Scripts
                 "bgAlpha", "bgMove", "bgScale");
             StoryResolver.Register<EtcResolver>("startAsync", "endAsync", "wait", "waitForClick", "canSkip", "at");
             StoryResolver.Register<UIResolver>("blackScreen", "showDialogBox");
+            StoryResolver.Register<ProgressResolver>("selection", "jumpToScene");
         }
 
         private void ReadStory()

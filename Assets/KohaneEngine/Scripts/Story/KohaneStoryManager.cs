@@ -1,7 +1,6 @@
 ﻿using System;
 using KohaneEngine.Scripts.Framework;
 using KohaneEngine.Scripts.Structure;
-using KohaneEngine.Scripts.Utils;
 
 namespace KohaneEngine.Scripts.Story
 {
@@ -58,15 +57,14 @@ namespace KohaneEngine.Scripts.Story
                 return;
             }
 
-            // Next scene
-            if (_story.scenes.Count > CurrentSceneIndex + 1)
-            {
-                CurrentSceneIndex++;
-                CurrentBlockIndex = 0;
-                return;
-            }
+            throw new Exception("Reach end of scene");
+        }
 
-            throw new Exception("Reach end of story");
+        public void JumpToScene(string sceneName, bool fromSelection = false)
+        {
+            CurrentSceneIndex = _story.scenes.FindIndex((x) => x.label == sceneName);
+            // TODO: somewhat magic/cheat approach? need to improve!
+            CurrentBlockIndex = fromSelection ? 0 : -1;
         }
 
         public void JumpToLine(int sceneIndex, int blockLine)

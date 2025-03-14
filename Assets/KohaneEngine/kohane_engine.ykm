@@ -7,6 +7,9 @@
 -extern startAsync # (tested) the next commands will start simultaneously
 -extern endAsync   # (tested) end that
 -extern at time # (tested) start next animation at (time) secs of current sequence(before text or waitForClick)
+-extern selection selections # (untested) make a selection
+# Usage: @selection "a:nextScene1|b:nextScene2|c:nextScene3|..."
+-extern jumpToScene sceneName # (tested) jump to a specific scene
 
 # Characters
 -extern __charDefine id
@@ -100,6 +103,7 @@
 @charAlpha "tw" 1
 千和: 「那个，打扰了————」
 抱着便当盒的小小学妹来了。
+@selection "A:endA|B:endB|C:endC"
 @imgSpawn "sd" "SD_e002a.png" --layer 6 --alpha 0
 @imgAlpha "sd" 1 --time 1
 @charSpawn "ior" "CHR_姫織_基_制服U.png" -0.9 -0.7 0.8 0.8 --alpha 0 --time 0
@@ -207,3 +211,12 @@
 Fin.
 @showDialogBox 0
 @blackScreen 1
+
+-scene "endA"
+好的，这里是EndA
+
+-scene "endB"
+好的，这里是EndB
+
+-scene "endC"
+好的，这里是EndC

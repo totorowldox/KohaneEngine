@@ -1,4 +1,5 @@
-﻿using KohaneEngine.Scripts.Story;
+﻿using System.Linq;
+using KohaneEngine.Scripts.Story;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -39,6 +40,8 @@ namespace KohaneEngine.Scripts
         [Header("System")]
         public Button touchArea;
         public Button autoPlay;
+        public CanvasGroup selectionsCanvasGroup;
+        public Button selectionButtonPrefab;
 
         private void Start()
         {
@@ -49,5 +52,15 @@ namespace KohaneEngine.Scripts
         public RawImage CreateCharacterImage() => Instantiate(characterPrototype, characterParentTransform);
         
         public Canvas CreateImage() => Instantiate(imagePrototype, imageParentTransform);
+
+        public Button CreateSelection(string selection)
+        {
+            var button = Instantiate(selectionButtonPrefab, selectionsCanvasGroup.transform);
+            button.GetComponentInChildren<TMP_Text>().text = selection;
+            return button;
+        }
+
+        public void ClearSelections() => selectionsCanvasGroup.transform.Cast<Transform>().ToList()
+            .ForEach(child => Destroy(child.gameObject));
     }
 }
