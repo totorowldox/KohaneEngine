@@ -74,7 +74,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return ResolveResult.SuccessResult();
         }
 
-        //TODO: Destroy used image or use an object pool
+        // TODO: destroy used image or use an object pool
         private ResolveResult ImageDelete(Block block)
         {
             var id = block.GetArg<string>(0);
@@ -111,7 +111,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return image;
         }
 
-        //TODO: implement async loading
+        // TODO: implement async loading
         private void SetImage(RawImage img, string path)
         {
             var nextImage = _resourceManager.LoadResource<Texture>(string.Format(Constants.ImagePath,

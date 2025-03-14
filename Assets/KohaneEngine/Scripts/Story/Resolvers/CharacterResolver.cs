@@ -74,7 +74,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return ResolveResult.SuccessResult();
         }
 
-        //TODO: Destroy used character or use an object pool
+        // TODO: destroy used character or use an object pool
         private ResolveResult CharDelete(Block block)
         {
             var id = block.GetArg<string>(0);
@@ -109,7 +109,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return characterImage;
         }
 
-        //TODO: implement async loading
+        // TODO: implement async loading
         private void SetCharacterImage(RawImage characterImage, string path)
         {
             var nextImage = _resourceManager.LoadResource<Texture>(string.Format(Constants.CharacterPath,

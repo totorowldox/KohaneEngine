@@ -12,7 +12,6 @@ namespace KohaneEngine.Scripts.Framework
 
         public bool SwitchState(KohaneState nextState)
         {
-            //TODO
             switch (nextState)
             {
                 case KohaneState.Resolving:

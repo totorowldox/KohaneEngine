@@ -214,6 +214,12 @@ Fin.
 
 -scene "endA"
 好的，这里是EndA
+演示结束
+@startAsync
+@charRemove "tw"
+@showDialogBox 0
+@blackScreen 1
+@endAsync
 
 -scene "endB"
 好的，这里是EndB
