@@ -34,9 +34,10 @@
 -extern __imgDelete id
 -extern imgSwitch id path # (untested) switch image (should be the same size)
 -extern imgMove id x=0.0 y=0.0 tween=0 time=0.5 # (untested) move image
--extern imgAlpha id alpha=1.0 tween=0 time=0.5 # (untested) set alpha value
--extern imgScale id x=1.0 y=1.0 tween=0 time=0.5 # (untested) scale image
+-extern imgAlpha id alpha=1.0 tween=0 time=0.5 # (tested) set alpha value
+-extern imgScale id x=1.0 y=1.0 tween=0 time=0.5 # (tested) scale image
 
+# For layer, use 0~10+, 5 is the layer of characters, 10 is the layer of the dialogue box
 -macro imgSpawn id path layer=0 x=0.0 y=0.0 sx=1.0 sy=1.0 alpha=1.0 tween=0 time=0.5 # (untested) spawn a image
 @__imgDefine id layer
 @imgSwitch id path
@@ -99,6 +100,8 @@
 @charAlpha "tw" 1
 千和: 「那个，打扰了————」
 抱着便当盒的小小学妹来了。
+@imgSpawn "sd" "SD_e002a.png" --layer 6 --alpha 0
+@imgAlpha "sd" 1 --time 1
 @charSpawn "ior" "CHR_姫織_基_制服U.png" -0.9 -0.7 0.8 0.8 --alpha 0 --time 0
 @startAsync
 @charAlpha "ior" 1
@@ -107,7 +110,11 @@
 @bgMove 0.2 0.05
 @endAsync
 姬织: 「————呣！」
+@imgSwitch "sd" "SD_e002b.png"
+@imgScale "sd" 1.2 1.2
+@imgMove "sd" 0 0.2
 一直看上去困得不行的姬织突然睁开了眼睛。
+@imgRemove "sd"
 @charSwitch "ior" "CHR_姫織_喜_制服U.png"
 @at 0
 @charMove "ior" -0.5 -0.75 --tween 6 --time 0.2
@@ -200,60 +207,3 @@
 Fin.
 @showDialogBox 0
 @blackScreen 1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# E.G.
-# -scene "__entrypoint__" # define a scene to write scripts
-# @initScene 0 1
-# @canSkip false
-# @bgm "1.mp3" 1
-# @wait 1
-# @startAsync
-# @bgSwitch "BG1.png"
-# Hello, World!
-# @endAsync
-# @charSpawn "A" "A_001.png"
-# A: 你好！
-# @charSwitch "A" "A_002.png"
-# @startAsync
-# @charMove "A" 0.5 0 --time 1 --tween 11
-# @charScale "A" 1.1 1.1 --time 1 --tween 11
-# @charAlpha "A" 0.6 --time 1 --tween 11
-# @endAsync
-# @waitForClick
-# @charMove "A" -0.5 0 --time 1 --tween 6
-# @charSwitch "A" "A_001.png"
-# A: 我可以左右乱动！
-# @canSkip true
-# @charRemove "A"
-# @bgAlpha 0.5
-# A: 背景消失中。。。50%
-# @bgAlpha 0.55
-# A: 背景消失中。。。75%
-# @bgAlpha 0
-# A: 背景没啦！！！
-# @bgAlpha 0.6
-# A: 又回来了60%！
-# @bgSwitch "BG2.png"
-# A: 换了一张呢！
-# 以上为示例脚本内容

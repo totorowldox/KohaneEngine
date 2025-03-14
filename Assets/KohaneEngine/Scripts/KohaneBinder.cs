@@ -22,7 +22,7 @@ namespace KohaneEngine.Scripts
         
         [Space(10)]
         [Header("Image")]
-        public RawImage imagePrototype;
+        public Canvas imagePrototype;
         public RectTransform imageParentTransform;
 
 
@@ -48,6 +48,6 @@ namespace KohaneEngine.Scripts
 
         public RawImage CreateCharacterImage() => Instantiate(characterPrototype, characterParentTransform);
         
-        public RawImage CreateImage() => Instantiate(imagePrototype, imageParentTransform);
+        public Canvas CreateImage() => Instantiate(imagePrototype, imageParentTransform);
     }
 }

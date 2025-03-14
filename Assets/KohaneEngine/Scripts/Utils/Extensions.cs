@@ -6,7 +6,7 @@ namespace KohaneEngine.Scripts.Utils
     public static class Extensions
     {
         /// <summary>
-        /// Get an argument
+        /// Get an argument from the block
         /// </summary>
         public static T GetArg<T>(this Block block, int index)
         {

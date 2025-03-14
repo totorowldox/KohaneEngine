@@ -93,7 +93,10 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             {
                 return ResolveResult.FailResult("[CharacterResolver] Character already defined, are you using builtin function???");
             }
-            _characterImages.Add(id, _binder.CreateCharacterImage());
+
+            var newChar = _binder.CreateCharacterImage();
+            newChar.name = $"Char - {id}";
+            _characterImages.Add(id, newChar);
             return ResolveResult.SuccessResult();
         }
 

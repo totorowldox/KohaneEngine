@@ -43,7 +43,7 @@ namespace KohaneEngine.Scripts.Story
                 _autoPlayManager.ToggleAutoPlay();
             }
             // Interrupt animation when input is pressed
-            else if (_stateManager.CanSkip() &&_stateManager.HasFlag(KohaneFlag.Animating))
+            else if (_stateManager.CanSkip() && _stateManager.HasFlag(KohaneFlag.Animating))
             {
                 _animator.InterruptAnimation();
             }

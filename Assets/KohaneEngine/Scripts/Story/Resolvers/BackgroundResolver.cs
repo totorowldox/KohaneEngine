@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using System.Threading.Tasks;
+using DG.Tweening;
 using KohaneEngine.Scripts.Framework;
 using KohaneEngine.Scripts.ResourceManager;
 using KohaneEngine.Scripts.Structure;
@@ -73,7 +74,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return ResolveResult.SuccessResult();
         }
 
-        private async void SetBackgroundImage(string path)
+        private async Task SetBackgroundImage(string path)
         {
             var nextImage =
                 await _resourceManager.LoadResourceAsync<Sprite>(string.Format(Constants.BackgroundPath,

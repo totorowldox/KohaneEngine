@@ -95,9 +95,10 @@ namespace KohaneEngine.Scripts.Story.Resolvers
                 return ResolveResult.FailResult("[ImageResolver] Image already defined, are you using builtin function???");
             }
 
-            var newImg = _binder.CreateImage();
-            newImg
-            _images.Add(id, );
+            var uiCanvas = _binder.CreateImage();
+            uiCanvas.name = $"Image - {id}";
+            uiCanvas.sortingOrder = layer;
+            _images.Add(id, uiCanvas.GetComponentInChildren<RawImage>());
             return ResolveResult.SuccessResult();
         }
 
