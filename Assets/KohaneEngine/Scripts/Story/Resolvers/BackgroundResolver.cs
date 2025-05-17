@@ -28,6 +28,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             Functions.Add("bgAlpha", BgAlpha);
         }
 
+        [StoryFunctionAttr("bgScale")]
         private ResolveResult BgScale(Block block)
         {
             var ax = block.GetArg<float>(0);
@@ -40,6 +41,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return ResolveResult.SuccessResult();
         }
 
+        [StoryFunctionAttr("bgMove")]
         private ResolveResult BgMove(Block block)
         {
             var ax = block.GetArg<float>(0);
@@ -52,6 +54,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return ResolveResult.SuccessResult();
         }
 
+        [StoryFunctionAttr("bgAlpha")]
         private ResolveResult BgAlpha(Block block)
         {
             var alpha = block.GetArg<float>(0);
@@ -62,12 +65,14 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return ResolveResult.SuccessResult();
         }
 
+        [StoryFunctionAttr("__bgRemove")]
         private ResolveResult BgRemove(Block block)
         {
             _backgroundImage.sprite = null;
             return ResolveResult.SuccessResult();
         }
 
+        [StoryFunctionAttr("__bgSwitch")]
         private ResolveResult BgSwitch(Block block)
         {
             _animator.AppendCallback(() => SetBackgroundImage(block.GetArg<string>(0)));

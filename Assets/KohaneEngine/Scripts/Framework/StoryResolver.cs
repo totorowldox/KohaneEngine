@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using KohaneEngine.Scripts.Story;
 using KohaneEngine.Scripts.Structure;
 using UnityEngine;
@@ -9,18 +11,32 @@ namespace KohaneEngine.Scripts.Framework
     public class StoryResolver
     {
         private readonly Dictionary<string, Type> _typeMap = new();
-        
+
         /// <summary>
-        /// Register a resolver to some block types
+        /// Register all functions of StoryFunction attribute under the namespace
         /// </summary>
-        /// <typeparam name="T">Resolver</typeparam>
-        public void Register<T>(params string[] types)
+        /// <param name="namespaceName">The given namespace</param>
+        public void RegisterAllOf(string namespaceName)
         {
-            foreach (var type in types)
+            var assembly = Assembly.GetExecutingAssembly();
+            var types = assembly.GetTypes();
+            var namespaceTypes = types.Where(t => t.Namespace == namespaceName);
+            foreach (var type in namespaceTypes)
             {
-                if (!_typeMap.TryAdd(type, typeof(T)))
+                var methods = type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic |
+                                              BindingFlags.Instance | BindingFlags.Static |
+                                              BindingFlags.DeclaredOnly);
+                foreach (var method in methods.Where(x => x.IsDefined(typeof(StoryFunctionAttr), false)))
                 {
-                    throw new InvalidOperationException($"Block type {type} has been registered");
+                    var attribute = method.GetCustomAttribute(typeof(StoryFunctionAttr));
+                    if (attribute is StoryFunctionAttr customAttribute)
+                    {
+                        Console.WriteLine($"    Description: {customAttribute.Description}");
+                        if (!_typeMap.TryAdd(customAttribute.Name, method.DeclaringType))
+                        {
+                            throw new InvalidOperationException($"Block type {type} has been registered");
+                        }
+                    }
                 }
             }
         }

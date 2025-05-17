@@ -23,12 +23,14 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             Functions.Add("jumpToScene", JumpToScene);
         }
 
+        [StoryFunctionAttr("selection")]
         private ResolveResult Selection(Block block)
         {
             _ = WaitForSelection(block);
             return ResolveResult.SuccessResult();
         }
 
+        [StoryFunctionAttr("jumpToScene")]
         private ResolveResult JumpToScene(Block arg)
         {
             _storyManager.JumpToScene(arg.GetArg<string>(0));

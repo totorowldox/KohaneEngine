@@ -31,6 +31,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             Functions.Add("charAlpha", CharAlpha);
         }
 
+        [StoryFunctionAttr("charScale")]
         private ResolveResult CharScale(Block block)
         {
             var id = block.GetArg<string>(0);
@@ -43,6 +44,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return ResolveResult.SuccessResult();
         }
 
+        [StoryFunctionAttr("charAlpha")]
         private ResolveResult CharAlpha(Block block)
         {
             var id = block.GetArg<string>(0);
@@ -54,6 +56,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return ResolveResult.SuccessResult();
         }
 
+        [StoryFunctionAttr("charMove")]
         private ResolveResult CharMove(Block block)
         {
             var id = block.GetArg<string>(0);
@@ -67,6 +70,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return ResolveResult.SuccessResult();
         }
 
+        [StoryFunctionAttr("charSwitch")]
         private ResolveResult CharSwitch(Block block)
         {
             var id = block.GetArg<string>(0);
@@ -75,6 +79,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         }
 
         // TODO: destroy used character or use an object pool
+        [StoryFunctionAttr("__charDelete")]
         private ResolveResult CharDelete(Block block)
         {
             var id = block.GetArg<string>(0);
@@ -86,6 +91,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return ResolveResult.SuccessResult();
         }
 
+        [StoryFunctionAttr("__charDefine")]
         private ResolveResult CharDefine(Block block)
         {
             var id = block.GetArg<string>(0);

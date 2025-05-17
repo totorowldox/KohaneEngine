@@ -1673,7 +1673,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   storyAsset: {fileID: 4900000, guid: f7efd20ab0e4b1147988b724e1c0f347, type: 3}
-  isEditor: 1
+  isEditor: 0
 --- !u!114 &861562618
 MonoBehaviour:
   m_ObjectHideFlags: 0

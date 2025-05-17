@@ -31,6 +31,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             Functions.Add("imgAlpha", ImageAlpha);
         }
 
+        [StoryFunctionAttr("imgScale")]
         private ResolveResult ImageScale(Block block)
         {
             var id = block.GetArg<string>(0);
@@ -43,6 +44,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return ResolveResult.SuccessResult();
         }
 
+        [StoryFunctionAttr("imgAlpha")]
         private ResolveResult ImageAlpha(Block block)
         {
             var id = block.GetArg<string>(0);
@@ -54,6 +56,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return ResolveResult.SuccessResult();
         }
 
+        [StoryFunctionAttr("imgMove")]
         private ResolveResult ImageMove(Block block)
         {
             var id = block.GetArg<string>(0);
@@ -67,6 +70,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return ResolveResult.SuccessResult();
         }
 
+        [StoryFunctionAttr("imgSwitch")]
         private ResolveResult ImageSwitch(Block block)
         {
             var id = block.GetArg<string>(0);
@@ -75,6 +79,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         }
 
         // TODO: destroy used image or use an object pool
+        [StoryFunctionAttr("__imgDelete")]
         private ResolveResult ImageDelete(Block block)
         {
             var id = block.GetArg<string>(0);
@@ -86,6 +91,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return ResolveResult.SuccessResult();
         }
 
+        [StoryFunctionAttr("__imgDefine")]
         private ResolveResult ImageDefine(Block block)
         {
             var id = block.GetArg<string>(0);

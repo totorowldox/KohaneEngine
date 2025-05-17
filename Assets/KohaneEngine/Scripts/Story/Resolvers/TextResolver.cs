@@ -43,6 +43,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             Functions.Add("__text_end", TextEnd);
         }
 
+        [StoryFunctionAttr("__text_begin")]
         private ResolveResult TextBegin(Block block)
         {
             if (_typeWriter?.HasMore ?? false)
@@ -56,6 +57,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return ResolveResult.SuccessResult();
         }
 
+        [StoryFunctionAttr("__text_end")]
         private ResolveResult TextEnd(Block block)
         {
             var hasMore = block.GetArg<bool>(0);
@@ -72,6 +74,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return ResolveResult.SuccessResult();
         }
 
+        [StoryFunctionAttr("__text_type")]
         private ResolveResult TextType(Block block)
         {
             var text = block.GetArg<string>(0);

@@ -26,6 +26,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             Functions.Add("blackScreen", BlackScreen);
         }
 
+        [StoryFunctionAttr("showDialogBox")]
         private ResolveResult ShowDialogBox(Block block)
         {
             var alpha = block.GetArg<float>(0);
@@ -35,6 +36,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return ResolveResult.SuccessResult();
         }
 
+        [StoryFunctionAttr("blackScreen")]
         private ResolveResult BlackScreen(Block block)
         {
             var alpha = block.GetArg<float>(0);

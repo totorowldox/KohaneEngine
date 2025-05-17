@@ -23,6 +23,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             Functions.Add("bgm", BGM);
         }
 
+        [StoryFunctionAttr("sfx")]
         private ResolveResult SoundEffect(Block block)
         {
             var audio = block.GetArg<string>(0);
@@ -31,6 +32,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return ResolveResult.SuccessResult();
         }
 
+        [StoryFunctionAttr("bgm")]
         private ResolveResult BGM(Block block)
         {
             var audio = block.GetArg<string>(0);

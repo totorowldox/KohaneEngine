@@ -57,18 +57,8 @@ namespace KohaneEngine.Scripts
         {
             Resolver.Register<IKohaneRuntimeStructSerializer, YukimiJsonSerializer>();
             
-            // Register types
-            StoryResolver.Register<AudioResolver>("bgm", "sfx");
-            StoryResolver.Register<TextResolver>("__text_begin", "__text_type", "__text_end");
-            StoryResolver.Register<CharacterResolver>("__charDefine", "__charDelete",
-                "charSwitch", "charMove", "charAlpha", "charScale");
-            StoryResolver.Register<ImageResolver>("__imgDefine", "__imgDelete",
-                "imgSwitch", "imgMove", "imgAlpha", "imgScale");
-            StoryResolver.Register<BackgroundResolver>("__bgSwitch", "__bgRemove",
-                "bgAlpha", "bgMove", "bgScale");
-            StoryResolver.Register<EtcResolver>("startAsync", "endAsync", "wait", "waitForClick", "canSkip", "at");
-            StoryResolver.Register<UIResolver>("blackScreen", "showDialogBox");
-            StoryResolver.Register<ProgressResolver>("selection", "jumpToScene");
+            // Register story functions 
+            StoryResolver.RegisterAllOf("KohaneEngine.Scripts.Story.Resolvers");
         }
 
         private void ReadStory()
