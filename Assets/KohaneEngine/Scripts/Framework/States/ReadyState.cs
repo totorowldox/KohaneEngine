@@ -18,7 +18,7 @@ namespace KohaneEngine.Scripts.Framework.States
                         .ContinueWith(() =>
                         {
                             if (StateManager.CurrentPlayback == PlaybackMode.Skip)
-                                StateManager.TransitionTo(new ResolvingState(StateManager));
+                                RequestNextStep();
                         });
                     return;
 
@@ -27,7 +27,7 @@ namespace KohaneEngine.Scripts.Framework.States
                         .ContinueWith(() =>
                         {
                             if (StateManager.CurrentPlayback == PlaybackMode.Auto)
-                                StateManager.TransitionTo(new ResolvingState(StateManager));
+                                RequestNextStep();
                         });
                     break;
             }

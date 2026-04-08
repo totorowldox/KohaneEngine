@@ -2,10 +2,10 @@
 {
     public abstract class KohaneState
     {
-        protected KohaneStateManager StateManager;
-        protected KohaneInputManager InputManager;
+        protected readonly KohaneStateManager StateManager;
+        protected readonly KohaneInputManager InputManager;
 
-        public KohaneState(KohaneStateManager stateManager)
+        protected KohaneState(KohaneStateManager stateManager)
         {
             StateManager = stateManager;
             InputManager = KohaneEngine.Resolver.Resolve<KohaneInputManager>();
@@ -26,10 +26,7 @@
 
         protected virtual void HandleInput()
         {
-            if (StateManager.HasFlag(KohaneFlag.CannotSkip))
-                return;
-
-            if (HandleSkipInput()) return;
+            if (!StateManager.HasFlag(KohaneFlag.CannotSkip) && HandleSkipInput()) return;
 
             HandleAutoToggleInput();
 
@@ -55,37 +52,41 @@
 
         protected virtual void HandleAutoToggleInput()
         {
-            if (InputManager.GetPointerInput("auto"))
+            if (!InputManager.GetPointerUp("auto"))
             {
-                if (StateManager.IsAuto)
-                {
-                    StateManager.SetPlayback(PlaybackMode.Normal);
-                }
-                else
-                {
-                    StateManager.SetPlayback(PlaybackMode.Auto);
-                    RequestNextStep();
-                }
+                return;
+            }
+
+            if (StateManager.IsAuto)
+            {
+                StateManager.SetPlayback(PlaybackMode.Normal);
+            }
+            else
+            {
+                StateManager.SetPlayback(PlaybackMode.Auto);
+                RequestNextStep();
             }
         }
 
         protected virtual void HandleNextStepInput()
         {
-            bool wantsNext = InputManager.GetInputUp("next_step") ||
-                             InputManager.GetPointerInput("next_step");
+            var wantsNext = InputManager.GetInputUp("next_step") ||
+                            InputManager.GetPointerUp("next_step");
 
-            if (wantsNext)
+            if (!wantsNext)
             {
-                if (StateManager.IsAuto)
-                    StateManager.SetPlayback(PlaybackMode.Normal);
-
-                RequestNextStep();
+                return;
             }
+
+            if (StateManager.IsAuto)
+                StateManager.SetPlayback(PlaybackMode.Normal);
+
+            RequestNextStep();
         }
 
         protected virtual void RequestNextStep()
         {
-            StateManager.TransitionTo(new ResolvingState(StateManager));
+            StateManager.TransitionTo<ResolvingState>();
         }
     }
 }

@@ -44,21 +44,21 @@ namespace KohaneEngine.Scripts.Framework
         /// <summary>
         /// Resolve a story block
         /// </summary>
-        public bool Resolve(Block block)
+        public ResultType Resolve(Block block)
         {
             if (!_typeMap.TryGetValue(block.type, out var resolverType))
             {
                 throw new InvalidOperationException($"Unknown block type {block.type}");
             }
-            
+
             var resolver = KohaneEngine.Resolver.ResolveByType(resolverType) as Resolver;
             var ret = resolver!.Resolve(block);
-            if (!ret.Success)
+            if (ret.Type == ResultType.Failure)
             {
                 Debug.LogError(ret.Reason);
             }
 
-            return ret.RequestEndResolving;
+            return ret.Type;
         }
     }
 }

@@ -17,10 +17,11 @@ namespace KohaneEngine.Scripts.Framework
                 ["next_step"] = new() {KeyCode.Space, KeyCode.Return},
                 ["skip"] = new() {KeyCode.LeftControl, KeyCode.RightControl}
             };
+            var binder = KohaneEngine.Resolver.Resolve<KohaneBinder>();
             _pointerMappings = new Dictionary<string, List<PointerClick>>
             {
-                ["next_step"] = new() {KohaneEngine.Resolver.Resolve<KohaneBinder>().touchArea},
-                ["auto"] = new() {KohaneEngine.Resolver.Resolve<KohaneBinder>().autoPlay}
+                ["next_step"] = new() {binder.touchArea},
+                ["auto"] = new() {binder.autoPlay}
             };
         }
 
@@ -29,6 +30,6 @@ namespace KohaneEngine.Scripts.Framework
 
         public bool GetInputPressed(string key) => _keyMappings[key].Any(Input.GetKey);
 
-        public bool GetPointerInput(string key) => _pointerMappings[key].Any(x => x.IsUp);
+        public bool GetPointerUp(string key) => _pointerMappings[key].Any(x => x.IsUp);
     }
 }

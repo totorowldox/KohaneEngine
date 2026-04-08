@@ -74,7 +74,8 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         private ResolveResult CharSwitch(Block block)
         {
             var id = block.GetArg<string>(0);
-            SetCharacterImage(GetCharacterImage(id), block.GetArg<string>(1));
+            SetCharacterImage(GetCharacterImage(id), block.GetArg<string>(1), block.GetArg<float>(2),
+                block.GetArg<float>(3));
             return ResolveResult.SuccessResult();
         }
 
@@ -121,7 +122,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         }
 
         // TODO: implement async loading
-        private void SetCharacterImage(RawImage characterImage, string path)
+        private void SetCharacterImage(RawImage characterImage, string path, float newAlpha, float duration)
         {
             var nextImage = _resourceManager.LoadResource<Texture>(string.Format(Constants.CharacterPath,
                 path));
@@ -147,13 +148,13 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             // _animator.JoinAnimation(transitionImage.DOFade(1,
             //     Constants.CrossFadeDuration));
             var tempAlpha = 0f;
-            var targetAlpha = characterImage.color.a;
+            var targetAlpha = newAlpha;
             _animator.AppendAnimation(DOTween.To(() => tempAlpha, (x) =>
             {
                 tempAlpha = x;
                 characterImage.color = new Color(1, 1, 1, targetAlpha - x);
                 transitionImage.color = new Color(1, 1, 1, x);
-            }, targetAlpha, Constants.CrossFadeDuration), true);
+            }, targetAlpha, duration), true);
 
             _animator.AppendCallback(() =>
             {

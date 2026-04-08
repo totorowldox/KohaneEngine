@@ -11,7 +11,7 @@
 
         public override void OnEnter()
         {
-            _animator.StartAnimation(() => { StateManager.TransitionTo(new ReadyState(StateManager)); });
+            _animator.StartAnimation(() => { StateManager.TransitionTo<ReadyState>(); });
         }
 
         public override void OnUpdate()
@@ -25,6 +25,11 @@
 
         protected override void RequestNextStep()
         {
+            if (StateManager.HasFlag(KohaneFlag.CannotSkip))
+            {
+                return;
+            }
+
             _animator.InterruptAnimation();
         }
     }

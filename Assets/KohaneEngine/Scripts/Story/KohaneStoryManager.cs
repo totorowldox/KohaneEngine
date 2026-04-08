@@ -9,7 +9,7 @@ namespace KohaneEngine.Scripts.Story
         private static StoryResolver StoryResolver => KohaneEngine.StoryResolver;
 
         private KohaneStruct _story;
-        
+
         private readonly KohaneStateManager _stateManager;
         private readonly KohaneAnimator _animator;
 
@@ -31,13 +31,17 @@ namespace KohaneEngine.Scripts.Story
             _story = story;
         }
 
-        public void ResolveNext()
+        public ResultType ResolveNext()
         {
-            while (!StoryResolver.Resolve(CurrentBlock))
+            var ret = StoryResolver.Resolve(CurrentBlock);
+            while (ret == ResultType.Success)
             {
                 ToNextBlock();
+                ret = StoryResolver.Resolve(CurrentBlock);
             }
+
             ToNextBlock();
+            return ret;
         }
 
         private void ToNextBlock()

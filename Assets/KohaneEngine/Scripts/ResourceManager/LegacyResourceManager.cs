@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using KohaneEngine.Scripts.Utils;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ namespace KohaneEngine.Scripts.ResourceManager
     public class LegacyResourceManager : IResourceManager
     {
         private Dictionary<string, object> _resources;
-        
+
         public T LoadResource<T>(string path) where T : Object
         {
             path = path.WithoutExtension();
@@ -20,7 +21,7 @@ namespace KohaneEngine.Scripts.ResourceManager
             Debug.Log($"[LegacyResourceManager] Loading resource {path} async");
             path = path.WithoutExtension();
             var operation = Resources.LoadAsync<T>(path);
-            await TaskEx.WaitUntil(() => operation.isDone);
+            await UniTask.WaitUntil(operation, o => o.isDone);
             return operation.asset as T;
         }
     }

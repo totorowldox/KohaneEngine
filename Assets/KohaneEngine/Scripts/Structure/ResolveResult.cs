@@ -2,22 +2,39 @@
 {
     public class ResolveResult
     {
-        public bool Success;
+        public ResultType Type;
         public string Reason;
-        public bool RequestEndResolving;
 
-        public static ResolveResult SuccessResult(string reason = "", bool endResolving = false) => new()
+        public static ResolveResult SuccessResult(string reason = "") => new()
         {
-            Success = true,
+            Type = ResultType.Success,
             Reason = reason,
-            RequestEndResolving =  endResolving
         };
 
-        public static ResolveResult FailResult(string reason = "", bool endResolving = false) => new()
+        public static ResolveResult FailResult(string reason = "") => new()
         {
-            Success = false, 
+            Type = ResultType.Failure,
             Reason = reason,
-            RequestEndResolving = endResolving
         };
+
+        public static ResolveResult EndResolvingResult(string reason = "") => new()
+        {
+            Type = ResultType.EndResolving,
+            Reason = reason,
+        };
+
+        public static ResolveResult ChoiceResult(string reason = "") => new()
+        {
+            Type = ResultType.Choice,
+            Reason = reason,
+        };
+    }
+
+    public enum ResultType
+    {
+        Success,
+        Failure,
+        EndResolving,
+        Choice
     }
 }

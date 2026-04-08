@@ -13,7 +13,7 @@ namespace KohaneEngine.Scripts.Framework
 
         private void Awake()
         {
-            TransitionTo(new ReadyState(this));
+            TransitionTo<ReadyState>();
         }
 
         private void Update()
@@ -27,6 +27,11 @@ namespace KohaneEngine.Scripts.Framework
             CurrentState?.OnExit();
             CurrentState = newState;
             CurrentState.OnEnter();
+        }
+
+        public void TransitionTo<T>() where T : KohaneState
+        {
+            TransitionTo((T) Activator.CreateInstance(typeof(T), new object[] {this}));
         }
 
         public bool AddFlag(KohaneFlag flag)
@@ -61,8 +66,8 @@ namespace KohaneEngine.Scripts.Framework
     [Flags]
     public enum KohaneFlag
     {
-        None = 0,
-        CannotSkip = 1 << 3,
+        None = 1,
+        CannotSkip = 1 << 1,
     }
 
     public enum PlaybackMode

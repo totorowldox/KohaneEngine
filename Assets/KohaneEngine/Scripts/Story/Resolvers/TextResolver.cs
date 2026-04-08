@@ -22,7 +22,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             HasMore = false;
         }
     }
-    
+
     public class TextResolver : Resolver
     {
         private readonly KohaneBinder _binder;
@@ -30,8 +30,9 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         private readonly KohaneAnimator _animator;
         private readonly TypeWriter _typeWriter;
         private readonly TypewriterAnimation _textAnimator;
-        
-        public TextResolver(KohaneBinder binder, KohaneStateManager stateManager, KohaneAnimator animator, TypewriterAnimation textAnimator)
+
+        public TextResolver(KohaneBinder binder, KohaneStateManager stateManager, KohaneAnimator animator,
+            TypewriterAnimation textAnimator)
         {
             _binder = binder;
             _stateManager = stateManager;
@@ -50,7 +51,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             {
                 return ResolveResult.SuccessResult();
             }
-            
+
             _typeWriter!.Clear();
             var name = block.GetArg<string>(0) ?? "";
             _typeWriter.Name = name;
@@ -67,10 +68,10 @@ namespace KohaneEngine.Scripts.Story.Resolvers
                 _typeWriter.Text.AppendLine();
                 return ResolveResult.SuccessResult();
             }
-            
+
             TypeAnimation();
-            
-            return ResolveResult.SuccessResult(endResolving: true);
+
+            return ResolveResult.EndResolvingResult();
         }
 
         [StoryFunctionAttr("__text_type")]
@@ -86,16 +87,18 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             var phase = 0f;
             var text = _typeWriter.Text.ToString();
             var duration = _textAnimator.GetDuration(text);
-            _animator.AppendCallback(() =>
-            {
-                _textAnimator.InitializeAnimation(_typeWriter.Name, text);
-            });
+            //_animator.AppendCallback(() => {  });
+            //_textAnimator.InitializeAnimation(_typeWriter.Name, text);
             var anim = DOTween.To(() => phase, (x) =>
             {
                 phase = x;
                 _textAnimator.UpdateAnimation(phase);
-            }, duration, duration).SetEase(Ease.Linear);
-            _animator.JoinAnimation(anim);
+            }, duration, duration).SetEase(Ease.Linear).OnStart(() =>
+            {
+                _textAnimator.InitializeAnimation(_typeWriter.Name, text);
+            });
+            //_animator.InsertNextAnimationAt(0);
+            _animator.AppendAnimation(anim);
         }
     }
 }

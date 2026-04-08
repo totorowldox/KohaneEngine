@@ -13,13 +13,16 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         {
             _stateManager = stateManager;
             _animator = animator;
-            Functions.Add("startAsync", StartAsync);
-            Functions.Add("endAsync", EndAsync);
+            // Functions.Add("startAsync", StartAsync);
+            // Functions.Add("endAsync", EndAsync);
             Functions.Add("wait", Wait);
             Functions.Add("waitForClick", WaitForClick);
             Functions.Add("canSkip", CanSkip);
             Functions.Add("at", InsertAnimationAt);
+            Functions.Add("after", After);
+            Functions.Add("sequence", Sequence);
         }
+
 
         [StoryFunctionAttr("canSkip")]
         private ResolveResult CanSkip(Block block)
@@ -27,19 +30,20 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             var canSkip = block.GetArg<bool>(0);
             if (!canSkip)
             {
-                _animator.AppendCallback(() =>_stateManager.AddFlag(KohaneFlag.CannotSkip));
+                _animator.AppendCallback(() => _stateManager.AddFlag(KohaneFlag.CannotSkip));
             }
             else
             {
-                _animator.AppendCallback(() =>_stateManager.RemoveFlag(KohaneFlag.CannotSkip));
+                _animator.AppendCallback(() => _stateManager.RemoveFlag(KohaneFlag.CannotSkip));
             }
+
             return ResolveResult.SuccessResult();
         }
 
         [StoryFunctionAttr("waitForClick")]
         private ResolveResult WaitForClick(Block block)
         {
-            return ResolveResult.SuccessResult(endResolving: true);
+            return ResolveResult.EndResolvingResult();
         }
 
         [StoryFunctionAttr("wait")]
@@ -49,19 +53,35 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return ResolveResult.SuccessResult();
         }
 
-        [StoryFunctionAttr("endAsync")]
-        private ResolveResult EndAsync(Block block)
+
+        [StoryFunctionAttr("after")]
+        private ResolveResult After(Block block)
         {
-            _animator.ReduceAsyncLayer();
+            _animator.RequireAfter();
             return ResolveResult.SuccessResult();
         }
 
-        [StoryFunctionAttr("startAsync")]
-        private ResolveResult StartAsync(Block block)
+        [StoryFunctionAttr("sequence")]
+        private ResolveResult Sequence(Block block)
         {
-            _animator.AddAsyncLayer();
+            var isSequence = block.GetArg<bool>(0);
+            _animator.SetSequenceMode(isSequence);
             return ResolveResult.SuccessResult();
         }
+
+        // [StoryFunctionAttr("endAsync")]
+        // private ResolveResult EndAsync(Block block)
+        // {
+        //     _animator.ReduceAsyncLayer();
+        //     return ResolveResult.SuccessResult();
+        // }
+        //
+        // [StoryFunctionAttr("startAsync")]
+        // private ResolveResult StartAsync(Block block)
+        // {
+        //     _animator.AddAsyncLayer();
+        //     return ResolveResult.SuccessResult();
+        // }
 
         [StoryFunctionAttr("at")]
         private ResolveResult InsertAnimationAt(Block block)

@@ -74,7 +74,8 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         private ResolveResult ImageSwitch(Block block)
         {
             var id = block.GetArg<string>(0);
-            SetImage(GetImage(id), block.GetArg<string>(1));
+            SetImage(GetImage(id), block.GetArg<string>(1), block.GetArg<float>(2),
+                block.GetArg<float>(3));
             return ResolveResult.SuccessResult();
         }
 
@@ -85,8 +86,10 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             var id = block.GetArg<string>(0);
             if (!_images.ContainsKey(id))
             {
-                return ResolveResult.FailResult("[ImageResolver] Deleting undefined image, are you using builtin function???");
+                return ResolveResult.FailResult(
+                    "[ImageResolver] Deleting undefined image, are you using builtin function???");
             }
+
             _images.Remove(id);
             return ResolveResult.SuccessResult();
         }
@@ -98,7 +101,8 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             var layer = block.GetArg<int>(1);
             if (_images.ContainsKey(id))
             {
-                return ResolveResult.FailResult("[ImageResolver] Image already defined, are you using builtin function???");
+                return ResolveResult.FailResult(
+                    "[ImageResolver] Image already defined, are you using builtin function???");
             }
 
             var uiCanvas = _binder.CreateImage();
@@ -112,16 +116,18 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         {
             if (!_images.TryGetValue(id, out var image))
             {
-                throw new InvalidOperationException("[ImageResolver] Invalid image id, are you using builtin function???");
+                throw new InvalidOperationException(
+                    "[ImageResolver] Invalid image id, are you using builtin function???");
             }
+
             return image;
         }
 
         // TODO: implement async loading
-        private void SetImage(RawImage img, string path)
+        private void SetImage(RawImage img, string path, float newAlpha, float duration)
         {
             var nextImage = _resourceManager.LoadResource<Texture>(string.Format(Constants.ImagePath,
-                    path));
+                path));
             if (!img.texture)
             {
                 img.texture = nextImage;
@@ -138,20 +144,20 @@ namespace KohaneEngine.Scripts.Story.Resolvers
                 transitionImage.texture = nextImage;
                 transitionImage.SetNativeSize();
             }, true);
-            
+
             // _animator.AppendTweenAnimation(img.DOFade(0,
             //     Constants.ImageCrossFadeDuration), true);
             // _animator.JoinTweenAnimation(transitionImage.DOFade(1,
             //     Constants.ImageCrossFadeDuration));
             var tempAlpha = 0f;
-            var targetAlpha = img.color.a;
+            var targetAlpha = newAlpha;
             _animator.AppendAnimation(DOTween.To(() => tempAlpha, (x) =>
             {
                 tempAlpha = x;
                 img.color = new Color(1, 1, 1, targetAlpha - x);
                 transitionImage.color = new Color(1, 1, 1, x);
-            }, targetAlpha, Constants.CrossFadeDuration), true);
-            
+            }, targetAlpha, duration), true);
+
             _animator.AppendCallback(() =>
             {
                 img.texture = nextImage;

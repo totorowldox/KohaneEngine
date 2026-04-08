@@ -17,13 +17,18 @@ namespace KohaneEngine.Scripts.Framework
         private KohaneStateManager StateManager =>
             _stateManager ??= KohaneEngine.Resolver.Resolve<KohaneStateManager>();
 
-        private bool _isAsync = false;
-        private int _asyncLayers = 0;
+        private DefaultMode _defaultMode = DefaultMode.Parallel;
 
         private float _insertAt = float.NaN;
+        private float _waitCounter = 0f;
 
         public void InsertNextAnimationAt(float time)
         {
+            if (_defaultMode == DefaultMode.Sequence)
+            {
+                throw new Exception("Sequence mode does not support @at");
+            }
+
             _insertAt = time;
         }
 
@@ -37,28 +42,19 @@ namespace KohaneEngine.Scripts.Framework
                 return;
             }
 
-            if (_asyncLayers > 0)
+            if (!float.IsNaN(_insertAt))
             {
-                if (_isAsync)
-                {
-                    _tweenSequence.Join(tween);
-                }
-                else
-                {
-                    _tweenSequence.Append(tween);
-                    _isAsync = true;
-                }
+                _tweenSequence.Insert(_insertAt, tween);
+                _insertAt = float.NaN;
+                return;
+            }
+
+            if (_defaultMode == DefaultMode.Parallel && !forceAppend)
+            {
+                _tweenSequence.Insert(_waitCounter, tween);
             }
             else
             {
-                if (!float.IsNaN(_insertAt))
-                {
-                    _tweenSequence.Insert(_insertAt, tween);
-                    _insertAt = float.NaN;
-                    return;
-                }
-
-                _isAsync = forceAppend && _isAsync;
                 _tweenSequence.Append(tween);
             }
         }
@@ -91,28 +87,20 @@ namespace KohaneEngine.Scripts.Framework
                 _pendingCallbacks.Remove(callback);
             };
             _pendingCallbacks.Add(callback);
-            if (_asyncLayers > 0 && !forceAppend)
+
+            if (!float.IsNaN(_insertAt))
             {
-                if (_isAsync)
-                {
-                    _tweenSequence.JoinCallback(wrappedCallback);
-                }
-                else
-                {
-                    _tweenSequence.AppendCallback(wrappedCallback);
-                    _isAsync = true;
-                }
+                _tweenSequence.InsertCallback(_insertAt, wrappedCallback);
+                _insertAt = float.NaN;
+                return;
+            }
+
+            if (_defaultMode == DefaultMode.Parallel && !forceAppend)
+            {
+                _tweenSequence.InsertCallback(_waitCounter, wrappedCallback);
             }
             else
             {
-                if (!float.IsNaN(_insertAt))
-                {
-                    _tweenSequence.InsertCallback(_insertAt, wrappedCallback);
-                    _insertAt = float.NaN;
-                    return;
-                }
-
-                _isAsync = forceAppend && _isAsync;
                 _tweenSequence.AppendCallback(wrappedCallback);
             }
         }
@@ -120,13 +108,10 @@ namespace KohaneEngine.Scripts.Framework
         public void AppendTweenInterval(float duration)
         {
             CheckTweenSequence();
-            if (_asyncLayers == 0)
+            _waitCounter += duration;
+            if (_defaultMode == DefaultMode.Sequence)
             {
                 _tweenSequence.AppendInterval(duration);
-            }
-            else
-            {
-                throw new InvalidOperationException("Should not have wait command during async operation");
             }
         }
 
@@ -147,11 +132,6 @@ namespace KohaneEngine.Scripts.Framework
             {
                 endCallback.Invoke();
                 return;
-                _pendingCallbacks.ForEach(p => p?.Invoke());
-                _tweenSequence.Complete();
-                _tweenSequence = DOTween.Sequence();
-                _tweenSequence.OnComplete(delegate { endCallback.Invoke(); });
-                _tweenSequence.Play();
             }
         }
 
@@ -161,14 +141,14 @@ namespace KohaneEngine.Scripts.Framework
             _tweenSequence.Complete();
         }
 
-        public void AddAsyncLayer()
+        public void SetSequenceMode(bool val)
         {
-            _asyncLayers++;
+            _defaultMode = val ? DefaultMode.Sequence : DefaultMode.Parallel;
         }
 
-        public void ReduceAsyncLayer()
+        public void RequireAfter()
         {
-            _asyncLayers = Math.Max(0, _asyncLayers - 1);
+            _waitCounter = _tweenSequence.Duration();
         }
 
         private void CheckTweenSequence()
@@ -179,7 +159,14 @@ namespace KohaneEngine.Scripts.Framework
             }
 
             _pendingCallbacks.Clear();
+            _waitCounter = 0;
             _tweenSequence = DOTween.Sequence();
         }
+    }
+
+    enum DefaultMode
+    {
+        Sequence,
+        Parallel
     }
 }

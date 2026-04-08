@@ -1,4 +1,5 @@
 ﻿using KohaneEngine.Scripts.Story;
+using KohaneEngine.Scripts.Structure;
 
 namespace KohaneEngine.Scripts.Framework.States
 {
@@ -13,8 +14,13 @@ namespace KohaneEngine.Scripts.Framework.States
 
         public override void OnEnter()
         {
-            _storyManager.ResolveNext();
-            StateManager.TransitionTo(new AnimatingState(StateManager));
+            var ret = _storyManager.ResolveNext();
+            if (ret == ResultType.Choice)
+            {
+                return;
+            }
+
+            StateManager.TransitionTo<AnimatingState>();
         }
 
         public override void OnUpdate()
