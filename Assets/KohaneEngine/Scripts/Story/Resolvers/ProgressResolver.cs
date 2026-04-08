@@ -39,8 +39,9 @@ namespace KohaneEngine.Scripts.Story.Resolvers
 
         private async Task WaitForSelection(Block block)
         {
-            _stateManager.SwitchState(KohaneState.ResolveEnd);
-            _stateManager.AddFlag(KohaneFlag.InSystem);
+            // _stateManager.SwitchState(KohaneState.ResolveEnd);
+            // _stateManager.AddFlag(KohaneFlag.InSystem);
+            // [TODO] Switch to choice state.
 
             var selections = block.GetArg<string>(0).Split('|')
                 .Select(s => s.Split(':'))
@@ -71,8 +72,10 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             _binder.selectionsCanvasGroup.blocksRaycasts = false;
             _binder.selectionsCanvasGroup.DOFade(0, 1f).OnComplete(() =>
             {
-                _stateManager.RemoveFlag(KohaneFlag.InSystem);
-                _stateManager.SwitchState(KohaneState.Ready);
+                // _stateManager.RemoveFlag(KohaneFlag.InSystem);
+                // _stateManager.SwitchState(KohaneState.Ready);
+                
+                // [TODO] Switch to Ready state.
                 _storyManager.JumpToScene(selection, fromSelection: true);
                 _storyManager.ResolveNext();
             });

@@ -44,7 +44,7 @@ namespace KohaneEngine.Scripts.Framework
         /// <summary>
         /// Resolve a story block
         /// </summary>
-        public void Resolve(Block block)
+        public bool Resolve(Block block)
         {
             if (!_typeMap.TryGetValue(block.type, out var resolverType))
             {
@@ -57,6 +57,8 @@ namespace KohaneEngine.Scripts.Framework
             {
                 Debug.LogError(ret.Reason);
             }
+
+            return ret.RequestEndResolving;
         }
     }
 }

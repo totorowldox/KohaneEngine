@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using KohaneEngine.Scripts.Story;
+using KohaneEngine.Scripts.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,49 +9,36 @@ namespace KohaneEngine.Scripts
 {
     public class KohaneBinder : MonoBehaviour
     {
-        [Header("Audio")]
-        public AudioSource bgmSource;
-        
-        [Space(10)]
-        [Header("Dialog")]
-        public TMP_Text speaker;
+        [Header("Audio")] public AudioSource bgmSource;
+
+        [Space(10)] [Header("Dialog")] public TMP_Text speaker;
         public TMP_Text text;
-        
-        [Space(10)]
-        [Header("Character")]
-        public RawImage characterPrototype;
+
+        [Space(10)] [Header("Character")] public RawImage characterPrototype;
         public RectTransform characterParentTransform;
-        
-        [Space(10)]
-        [Header("Image")]
-        public Canvas imagePrototype;
+
+        [Space(10)] [Header("Image")] public Canvas imagePrototype;
         public RectTransform imageParentTransform;
 
 
-        [Space(10)]
-        [Header("Background")]
-        public Image backgroundImage;
+        [Space(10)] [Header("Background")] public Image backgroundImage;
 
-        [Space(10)]
-        [Header("UI")]
-        public Image blackScreenImage;
+        [Space(10)] [Header("UI")] public Image blackScreenImage;
         public CanvasGroup dialogCanvasGroup;
-        
-        [Space(10)]
-        [Header("System")]
-        public Button touchArea;
-        public Button autoPlay;
+
+        [Space(10)] [Header("System")] public PointerClick touchArea;
+        public PointerClick autoPlay;
         public CanvasGroup selectionsCanvasGroup;
         public Button selectionButtonPrefab;
 
         private void Start()
         {
-            touchArea.onClick.AddListener(() => KohaneEngine.Resolver.Resolve<KohaneInteractManager>().PerformNextStep());
-            autoPlay.onClick.AddListener(() => KohaneEngine.Resolver.Resolve<KohaneAutoPlayManager>().ToggleAutoPlay());
+            //touchArea.onClick.AddListener(() => KohaneEngine.Resolver.Resolve<KohaneInteractManager>().PerformNextStep());
+            //autoPlay.onClick.AddListener(() => KohaneEngine.Resolver.Resolve<KohaneAutoPlayManager>().ToggleAutoPlay());
         }
 
         public RawImage CreateCharacterImage() => Instantiate(characterPrototype, characterParentTransform);
-        
+
         public Canvas CreateImage() => Instantiate(imagePrototype, imageParentTransform);
 
         public Button CreateSelection(string selection)

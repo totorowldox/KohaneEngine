@@ -85,8 +85,10 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             var id = block.GetArg<string>(0);
             if (!_characterImages.ContainsKey(id))
             {
-                return ResolveResult.FailResult("[CharacterResolver] Deleting undefined character, are you using builtin function???");
+                return ResolveResult.FailResult(
+                    "[CharacterResolver] Deleting undefined character, are you using builtin function???");
             }
+
             _characterImages.Remove(id);
             return ResolveResult.SuccessResult();
         }
@@ -97,7 +99,8 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             var id = block.GetArg<string>(0);
             if (_characterImages.ContainsKey(id))
             {
-                return ResolveResult.FailResult("[CharacterResolver] Character already defined, are you using builtin function???");
+                return ResolveResult.FailResult(
+                    "[CharacterResolver] Character already defined, are you using builtin function???");
             }
 
             var newChar = _binder.CreateCharacterImage();
@@ -110,8 +113,10 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         {
             if (!_characterImages.TryGetValue(id, out var characterImage))
             {
-                throw new InvalidOperationException("[CharacterResolver] Invalid character id, are you using builtin function???");
+                throw new InvalidOperationException(
+                    "[CharacterResolver] Invalid character id, are you using builtin function???");
             }
+
             return characterImage;
         }
 
@@ -119,7 +124,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         private void SetCharacterImage(RawImage characterImage, string path)
         {
             var nextImage = _resourceManager.LoadResource<Texture>(string.Format(Constants.CharacterPath,
-                    path));
+                path));
             if (!characterImage.texture)
             {
                 characterImage.texture = nextImage;
@@ -136,11 +141,11 @@ namespace KohaneEngine.Scripts.Story.Resolvers
                 transitionImage.texture = nextImage;
                 transitionImage.SetNativeSize();
             }, true);
-            
-            // _animator.AppendTweenAnimation(characterImage.DOFade(0,
-            //     Constants.CharacterCrossFadeDuration), true);
-            // _animator.JoinTweenAnimation(transitionImage.DOFade(1,
-            //     Constants.CharacterCrossFadeDuration));
+
+            // _animator.AppendAnimation(characterImage.DOFade(0,
+            //     Constants.CrossFadeDuration), true);
+            // _animator.JoinAnimation(transitionImage.DOFade(1,
+            //     Constants.CrossFadeDuration));
             var tempAlpha = 0f;
             var targetAlpha = characterImage.color.a;
             _animator.AppendAnimation(DOTween.To(() => tempAlpha, (x) =>
@@ -149,7 +154,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
                 characterImage.color = new Color(1, 1, 1, targetAlpha - x);
                 transitionImage.color = new Color(1, 1, 1, x);
             }, targetAlpha, Constants.CrossFadeDuration), true);
-            
+
             _animator.AppendCallback(() =>
             {
                 characterImage.texture = nextImage;

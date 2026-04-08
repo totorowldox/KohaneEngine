@@ -3,7 +3,6 @@ using KohaneEngine.Scripts.Graphic.TypewriterAnimation;
 using KohaneEngine.Scripts.ResourceManager;
 using KohaneEngine.Scripts.Serializer;
 using KohaneEngine.Scripts.Story;
-using KohaneEngine.Scripts.Story.Resolvers;
 using KohaneEngine.Scripts.StoryReader;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -34,10 +33,9 @@ namespace KohaneEngine.Scripts
         private void InitializeResolvers()
         {
             Resolver.RegisterInstance(GetComponent<KohaneBinder>());
-            Resolver.RegisterInstance(gameObject.AddComponent<KohaneInteractManager>());
-            Resolver.Register<KohaneStateManager>();
+            Resolver.RegisterInstance(gameObject.AddComponent<KohaneInputManager>());
+            Resolver.RegisterInstance(gameObject.AddComponent<KohaneStateManager>());
             Resolver.Register<KohaneStoryManager>();
-            Resolver.Register<KohaneAutoPlayManager>();
             Resolver.Register<KohaneAnimator>();
             if (!isEditor)
             {
@@ -47,6 +45,7 @@ namespace KohaneEngine.Scripts
             {
                 Resolver.Register<IStoryReader, LocalFileReader>();
             }
+
             Resolver.Register<IResourceManager, LegacyResourceManager>();
             Resolver.Register<TypewriterAnimation, FadeDownTypewriterAnimation>();
 
@@ -56,7 +55,7 @@ namespace KohaneEngine.Scripts
         private void UseYukimiScript()
         {
             Resolver.Register<IKohaneRuntimeStructSerializer, YukimiJsonSerializer>();
-            
+
             // Register story functions 
             StoryResolver.RegisterAllOf("KohaneEngine.Scripts.Story.Resolvers");
         }
@@ -90,6 +89,7 @@ namespace KohaneEngine.Scripts
             {
                 _jumpToSceneIndex = _jumpToLine = -1;
             }
+
             var currentSceneName = SceneManager.GetActiveScene().name;
             SceneManager.LoadScene(currentSceneName);
         }

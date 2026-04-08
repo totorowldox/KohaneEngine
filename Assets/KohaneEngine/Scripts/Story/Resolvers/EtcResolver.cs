@@ -39,8 +39,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         [StoryFunctionAttr("waitForClick")]
         private ResolveResult WaitForClick(Block block)
         {
-            _stateManager.SwitchState(KohaneState.ResolveEnd);
-            return ResolveResult.SuccessResult();
+            return ResolveResult.SuccessResult(endResolving: true);
         }
 
         [StoryFunctionAttr("wait")]
@@ -53,14 +52,14 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         [StoryFunctionAttr("endAsync")]
         private ResolveResult EndAsync(Block block)
         {
-            _stateManager.RemoveFlag(KohaneFlag.AsyncResolving);
+            _animator.ReduceAsyncLayer();
             return ResolveResult.SuccessResult();
         }
 
         [StoryFunctionAttr("startAsync")]
         private ResolveResult StartAsync(Block block)
         {
-            _stateManager.AddFlag(KohaneFlag.AsyncResolving);
+            _animator.AddAsyncLayer();
             return ResolveResult.SuccessResult();
         }
 

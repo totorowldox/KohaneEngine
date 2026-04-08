@@ -4,17 +4,20 @@
     {
         public bool Success;
         public string Reason;
+        public bool RequestEndResolving;
 
-        public static ResolveResult SuccessResult(string reason = "") => new()
+        public static ResolveResult SuccessResult(string reason = "", bool endResolving = false) => new()
         {
             Success = true,
-            Reason = reason
+            Reason = reason,
+            RequestEndResolving =  endResolving
         };
 
-        public static ResolveResult FailResult(string reason = "") => new()
+        public static ResolveResult FailResult(string reason = "", bool endResolving = false) => new()
         {
             Success = false, 
-            Reason = reason
+            Reason = reason,
+            RequestEndResolving = endResolving
         };
     }
 }

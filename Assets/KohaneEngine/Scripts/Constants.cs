@@ -1,5 +1,4 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace KohaneEngine.Scripts
 {
@@ -18,10 +17,10 @@ namespace KohaneEngine.Scripts
         public const float CanvasHeight = 1080;
 
         public const float CrossFadeDuration = 0.5f;
-        
+
         // Delay per character
         public const float TypeAnimationSpeed = 0.02f;
-        
+
         // Delay per block
         public const float AutoSpeed = 1f;
         public const float SkipSpeed = 0.2f;

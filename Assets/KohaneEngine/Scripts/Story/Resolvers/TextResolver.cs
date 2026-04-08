@@ -70,8 +70,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             
             TypeAnimation();
             
-            _stateManager.SwitchState(KohaneState.ResolveEnd);
-            return ResolveResult.SuccessResult();
+            return ResolveResult.SuccessResult(endResolving: true);
         }
 
         [StoryFunctionAttr("__text_type")]

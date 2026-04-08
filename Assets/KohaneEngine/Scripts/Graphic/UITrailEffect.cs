@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -74,8 +76,9 @@ namespace KohaneEngine.Scripts.Graphic
             // Modify the vertices to create the trail effect
             for (var i = _trailVertices.Count - 1; i >= 0; i--)
             {
-                var t = _trailTimes[i] / fadeDuration;
-                var color = Color.Lerp(graphic.color - new Color(0, 0, 0, 0.7f), new Color(1, 1, 1, 0), t);
+                var t = Math.Clamp(_trailTimes[i] / fadeDuration, 0, 1);
+                var alpha = DOVirtual.EasedValue(0.7f, 0f, t, Ease.OutQuart) * graphic.color.a;
+                var color = new Color(1, 1, 1, alpha);
                 var relativePos = DivideVector(_trailPositions[i] - transform.localPosition, transform.localScale);
 
                 for (var j = 0; j < _trailVertices[i].Length; j++)

@@ -29,23 +29,15 @@ namespace KohaneEngine.Scripts.Story
         public void StartStory(KohaneStruct story)
         {
             _story = story;
-            ResolveNext();
         }
 
         public void ResolveNext()
         {
-            if (!_stateManager.SwitchState(KohaneState.Resolving))
+            while (!StoryResolver.Resolve(CurrentBlock))
             {
-                return;
-            }
-            
-            while (!_stateManager.IsInState(KohaneState.ResolveEnd))
-            {
-                StoryResolver.Resolve(CurrentBlock);
                 ToNextBlock();
             }
-
-            _animator.StartAnimation();
+            ToNextBlock();
         }
 
         private void ToNextBlock()
