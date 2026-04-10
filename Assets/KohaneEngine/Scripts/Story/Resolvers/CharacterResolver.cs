@@ -17,6 +17,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         private readonly KohaneAnimator _animator;
 
         private readonly Dictionary<string, RawImage> _characterImages = new();
+        private readonly Dictionary<string, Tween> _characterPersistentEffects = new();
 
         public CharacterResolver(IResourceManager resourceManager, KohaneBinder binder, KohaneAnimator animator)
         {
@@ -29,6 +30,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             Functions.Add("charMove", CharMove);
             Functions.Add("charScale", CharScale);
             Functions.Add("charAlpha", CharAlpha);
+            Functions.Add("charEffect", CharEffect);
         }
 
         [StoryFunctionAttr("charScale")]
@@ -91,6 +93,12 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             }
 
             _characterImages.Remove(id);
+            if (_characterPersistentEffects.ContainsKey(id))
+            {
+                _characterPersistentEffects[id].Kill();
+                _characterPersistentEffects.Remove(id);
+            }
+
             return ResolveResult.SuccessResult();
         }
 
@@ -109,6 +117,65 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             _characterImages.Add(id, newChar);
             return ResolveResult.SuccessResult();
         }
+
+        [StoryFunctionAttr("charEffect")]
+        private ResolveResult CharEffect(Block block)
+        {
+            var id = block.GetArg<string>(0);
+            var effectName = block.GetArg<string>(1);
+            var dur = block.GetArg<float>(2);
+
+            if (effectName == "clear")
+            {
+                if (_characterPersistentEffects.ContainsKey(id))
+                {
+                    _characterPersistentEffects[id].Kill();
+                    _characterPersistentEffects.Remove(id);
+                }
+
+                return ResolveResult.SuccessResult();
+            }
+
+            var persistent = dur <= 0;
+
+            if (persistent)
+            {
+                // Set a constant period
+                dur = 1;
+            }
+
+            Tween effectTween;
+
+            switch (effectName)
+            {
+                case "shakeX":
+                    effectTween = GetCharacterImage(id).rectTransform
+                        .DOShakeAnchorPos(dur, new Vector2(100, 0), 10, 90, false, true, ShakeRandomnessMode.Harmonic);
+                    break;
+                case "shakeY":
+                    effectTween = GetCharacterImage(id).rectTransform
+                        .DOShakeAnchorPos(dur, new Vector2(0, 100), 10, 90, false, true, ShakeRandomnessMode.Harmonic);
+                    break;
+                case "shake":
+                    effectTween = GetCharacterImage(id).rectTransform
+                        .DOShakeAnchorPos(dur, new Vector2(0, 100), 10, 90, false, true, ShakeRandomnessMode.Harmonic);
+                    break;
+                default:
+                    throw new InvalidOperationException($"[CharacterResolver] Invalid effect name: {effectName}");
+            }
+
+            if (persistent)
+            {
+                effectTween.SetLoops(-1);
+            }
+            else
+            {
+                _animator.AppendAnimation(effectTween);
+            }
+
+            return ResolveResult.SuccessResult();
+        }
+
 
         private RawImage GetCharacterImage(string id)
         {

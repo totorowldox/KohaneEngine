@@ -17,6 +17,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         private readonly KohaneAnimator _animator;
 
         private readonly Dictionary<string, RawImage> _images = new();
+        private readonly Dictionary<string, Tween> _imagePersistentEffects = new();
 
         public ImageResolver(IResourceManager resourceManager, KohaneBinder binder, KohaneAnimator animator)
         {
@@ -29,6 +30,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             Functions.Add("imgMove", ImageMove);
             Functions.Add("imgScale", ImageScale);
             Functions.Add("imgAlpha", ImageAlpha);
+            Functions.Add("imgEffect", ImageEffect);
         }
 
         [StoryFunctionAttr("imgScale")]
@@ -109,6 +111,65 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             uiCanvas.name = $"Image - {id}";
             uiCanvas.sortingOrder = layer;
             _images.Add(id, uiCanvas.GetComponentInChildren<RawImage>());
+            return ResolveResult.SuccessResult();
+        }
+
+        [StoryFunctionAttr("imgEffect")]
+        private ResolveResult ImageEffect(Block block)
+        {
+            var id = block.GetArg<string>(0);
+            var effectName = block.GetArg<string>(1);
+            var dur = block.GetArg<float>(2);
+
+            if (effectName == "clear")
+            {
+                if (_imagePersistentEffects.ContainsKey(id))
+                {
+                    _imagePersistentEffects[id].Kill();
+                    _imagePersistentEffects.Remove(id);
+                }
+
+                return ResolveResult.SuccessResult();
+            }
+
+            var persistent = dur <= 0;
+
+            if (persistent)
+            {
+                // Set a constant period
+                dur = 1;
+            }
+
+            Tween effectTween;
+
+            switch (effectName)
+            {
+                case "shakeX":
+                    effectTween = GetImage(id).rectTransform
+                        .DOShakeAnchorPos(dur, new Vector2(20, 0), 20, 90, false, false, ShakeRandomnessMode.Harmonic);
+                    break;
+                case "shakeY":
+                    effectTween = GetImage(id).rectTransform
+                        .DOShakeAnchorPos(dur, new Vector2(0, 20), 20, 90, false, false, ShakeRandomnessMode.Harmonic);
+                    break;
+                case "shake":
+                    effectTween = GetImage(id).rectTransform
+                        .DOShakeAnchorPos(dur, new Vector2(0, 20), 20, 90, false, false, ShakeRandomnessMode.Harmonic);
+                    break;
+                default:
+                    throw new InvalidOperationException($"[CharacterResolver] Invalid effect name: {effectName}");
+            }
+
+            if (persistent)
+            {
+                effectTween.SetLoops(-1);
+                _imagePersistentEffects[id] = effectTween;
+            }
+            else
+            {
+                _animator.AppendAnimation(effectTween);
+            }
+
             return ResolveResult.SuccessResult();
         }
 

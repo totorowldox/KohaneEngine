@@ -23,13 +23,14 @@ namespace KohaneEngine.Scripts
 
         [Space(10)] [Header("Background")] public Image backgroundImage;
 
-        [Space(10)] [Header("UI")] public Image blackScreenImage;
+        [Space(10)] [Header("UI")] public TransitionLayer transitionLayer;
         public CanvasGroup dialogCanvasGroup;
 
         [Space(10)] [Header("System")] public PointerClick touchArea;
         public PointerClick autoPlay;
         public CanvasGroup selectionsCanvasGroup;
         public Button selectionButtonPrefab;
+        public ScreenEffectManager screenEffectManager;
 
         private void Start()
         {
