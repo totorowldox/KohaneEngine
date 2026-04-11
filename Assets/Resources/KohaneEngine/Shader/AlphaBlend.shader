@@ -2,67 +2,62 @@ Shader "Unlit/AlphaBlend"
 {
     Properties
     {
-        _MainTex ("Main Texture", 2D) = "white" {}
-        _TransitTex ("Transit Texture", 2D) = "white" {}
-        _Progress ("Transit Progress", Range(0, 1)) = 0
-        _Alpha ("Alpha", Range(0, 1)) = 1
+        [PerRendererData] _MainTex ("Old Texture (Main)", 2D) = "white" {}
+        _SecondTex ("New Texture", 2D) = "white" {}
+        _Lerp ("Transition Progress", Range(0, 1)) = 0
     }
+
     SubShader
     {
         Tags { "Queue"="Transparent" }
         
-        Cull Off
-        ZTest Always
-        ZWrite Off
+        Cull Off Lighting Off ZWrite Off ZTest Always
         Blend SrcAlpha OneMinusSrcAlpha
-        
+
         Pass
         {
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-
             #include "UnityCG.cginc"
 
-            struct appdata
-            {
-                float4 vertex : POSITION;
-                float2 uv : TEXCOORD0;
-                fixed4 color : COLOR;
+            struct appdata_t {
+                float4 vertex   : POSITION;
+                float4 color    : COLOR;
+                float2 texcoord : TEXCOORD0;
             };
 
-            struct v2f
-            {
-                float2 uv : TEXCOORD0;
-                float4 vertex : SV_POSITION;
-                fixed4 color : COLOR;
+            struct v2f {
+                float4 vertex   : SV_POSITION;
+                fixed4 color    : COLOR;
+                float2 texcoord  : TEXCOORD0;
+                float4 worldPosition : TEXCOORD1;
             };
 
             sampler2D _MainTex;
-            float4 _MainTex_ST;
-            sampler2D _TransitTex;
-            float4 _TransitTex_ST;
-            
-            fixed _Progress;
-            fixed _Alpha;
+            sampler2D _SecondTex;
+            float _Lerp;
 
-            v2f vert (appdata v)
-            {
+            v2f vert(appdata_t v) {
                 v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                o.worldPosition = v.vertex;
+                o.vertex = UnityObjectToClipPos(o.worldPosition);
+                o.texcoord = v.texcoord;
                 o.color = v.color;
                 return o;
             }
 
-            fixed4 frag (v2f i) : SV_Target
-            {
-                fixed4 col = tex2D(_MainTex, i.uv);
-                fixed4 col2 = tex2D(_TransitTex, i.uv);
-                fixed4 ret = col * (1 - _Progress) + col2 * _Progress;
-                ret *= i.color;
-                ret.a *= _Alpha;
-                return ret;
+            fixed4 frag(v2f i) : SV_Target {
+                fixed4 col1 = (tex2D(_MainTex, i.texcoord));
+                fixed4 col2 = (tex2D(_SecondTex, i.texcoord));
+
+                fixed4 finalCol;
+                finalCol.rgb = lerp(col1.rgb * col1.a, col2.rgb * col2.a, _Lerp);
+                finalCol.a   = lerp(col1.a, col2.a, _Lerp);
+
+                finalCol *= i.color;
+
+                return finalCol;
             }
             ENDCG
         }

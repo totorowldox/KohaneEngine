@@ -22,8 +22,8 @@ namespace KohaneEngine.Scripts.Utils
         /// <returns></returns>
         public static Vector2 CanvasPositionToScriptPosition(Vector2 canvasPosition)
         {
-            return new Vector2(canvasPosition.x / Constants.CanvasWidth * 2f - 1f,
-                canvasPosition.y / Constants.CanvasHeight * 2f - 1f);
+            return new Vector2(canvasPosition.x / Constants.CanvasWidth * 2f,
+                canvasPosition.y / Constants.CanvasHeight * 2f);
         }
     }
 }

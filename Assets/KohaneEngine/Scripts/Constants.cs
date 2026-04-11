@@ -13,8 +13,8 @@ namespace KohaneEngine.Scripts
         public const string ImagePath = "KohaneEngine/Image/{0}";
         public const string BackgroundPath = "KohaneEngine/Background/{0}";
 
-        public const float CanvasWidth = 1920;
-        public const float CanvasHeight = 1080;
+        public const float CanvasWidth = 1920f;
+        public const float CanvasHeight = 1080f;
 
         // Delay per character
         public const float TypeAnimationSpeed = 0.02f;

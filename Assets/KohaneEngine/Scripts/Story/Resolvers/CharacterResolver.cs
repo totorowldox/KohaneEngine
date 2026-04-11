@@ -7,11 +7,14 @@ using KohaneEngine.Scripts.Structure;
 using KohaneEngine.Scripts.Utils;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace KohaneEngine.Scripts.Story.Resolvers
 {
     public class CharacterResolver : Resolver
     {
+        private static readonly int SecondTex = Shader.PropertyToID("_SecondTex");
+        private static readonly int Lerp = Shader.PropertyToID("_Lerp");
         private readonly IResourceManager _resourceManager;
         private readonly KohaneBinder _binder;
         private readonly KohaneAnimator _animator;
@@ -76,8 +79,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         private ResolveResult CharSwitch(Block block)
         {
             var id = block.GetArg<string>(0);
-            SetCharacterImage(GetCharacterImage(id), block.GetArg<string>(1), block.GetArg<float>(2),
-                block.GetArg<float>(3));
+            SetCharacterImage(GetCharacterImage(id), block.GetArg<string>(1), block.GetArg<float>(2));
             return ResolveResult.SuccessResult();
         }
 
@@ -91,7 +93,8 @@ namespace KohaneEngine.Scripts.Story.Resolvers
                 return ResolveResult.FailResult(
                     "[CharacterResolver] Deleting undefined character, are you using builtin function???");
             }
-
+            
+            // Or use a pool if you are a nerd
             _characterImages.Remove(id);
             if (_characterPersistentEffects.ContainsKey(id))
             {
@@ -114,6 +117,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
 
             var newChar = _binder.CreateCharacterImage();
             newChar.name = $"Char - {id}";
+            newChar.material = new Material(Shader.Find("Unlit/AlphaBlend"));
             _characterImages.Add(id, newChar);
             return ResolveResult.SuccessResult();
         }
@@ -150,15 +154,15 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             {
                 case "shakeX":
                     effectTween = GetCharacterImage(id).rectTransform
-                        .DOShakeAnchorPos(dur, new Vector2(100, 0), 10, 90, false, true, ShakeRandomnessMode.Harmonic);
+                        .DOShakeAnchorPos(dur, new Vector2(20, 0), 20, 90, false, false, ShakeRandomnessMode.Harmonic);
                     break;
                 case "shakeY":
                     effectTween = GetCharacterImage(id).rectTransform
-                        .DOShakeAnchorPos(dur, new Vector2(0, 100), 10, 90, false, true, ShakeRandomnessMode.Harmonic);
+                        .DOShakeAnchorPos(dur, new Vector2(0, 20), 20, 90, false, false, ShakeRandomnessMode.Harmonic);
                     break;
                 case "shake":
                     effectTween = GetCharacterImage(id).rectTransform
-                        .DOShakeAnchorPos(dur, new Vector2(0, 100), 10, 90, false, true, ShakeRandomnessMode.Harmonic);
+                        .DOShakeAnchorPos(dur, new Vector2(20, 20), 20, 90, false, false, ShakeRandomnessMode.Harmonic);
                     break;
                 default:
                     throw new InvalidOperationException($"[CharacterResolver] Invalid effect name: {effectName}");
@@ -167,6 +171,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             if (persistent)
             {
                 effectTween.SetLoops(-1);
+                _characterPersistentEffects.Add(id, effectTween);
             }
             else
             {
@@ -189,7 +194,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         }
 
         // TODO: implement async loading
-        private void SetCharacterImage(RawImage characterImage, string path, float newAlpha, float duration)
+        private void SetCharacterImage(RawImage characterImage, string path, float duration)
         {
             var nextImage = _resourceManager.LoadResource<Texture>(string.Format(Constants.CharacterPath,
                 path));
@@ -197,39 +202,30 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             {
                 characterImage.texture = nextImage;
                 characterImage.SetNativeSize();
-                characterImage.transform.GetChild(0).GetComponent<RawImage>().color = new Color(1, 1, 1, 0);
                 //characterImage.material.SetFloat(Progress, 0);
                 return;
             }
 
-            var transitionImage = characterImage.transform.GetChild(0).GetComponent<RawImage>();
+            //var transitionImage = characterImage.transform.GetChild(0).GetComponent<RawImage>();
 
-            _animator.AppendCallback(() =>
-            {
-                transitionImage.texture = nextImage;
-                transitionImage.SetNativeSize();
-            }, true);
 
             // _animator.AppendAnimation(characterImage.DOFade(0,
             //     Constants.CrossFadeDuration), true);
             // _animator.JoinAnimation(transitionImage.DOFade(1,
             //     Constants.CrossFadeDuration));
-            var tempAlpha = 0f;
-            var targetAlpha = newAlpha;
-            _animator.AppendAnimation(DOTween.To(() => tempAlpha, (x) =>
+            _animator.AppendAnimation(characterImage.material.DOFloat(1, Lerp, duration).OnStart(() =>
             {
-                tempAlpha = x;
-                characterImage.color = new Color(1, 1, 1, targetAlpha - x);
-                transitionImage.color = new Color(1, 1, 1, x);
-            }, targetAlpha, duration), true);
-
-            _animator.AppendCallback(() =>
+                characterImage.material.SetTexture(SecondTex, nextImage);
+                // transitionImage.texture = nextImage;
+                // transitionImage.SetNativeSize();
+            }).OnComplete(() =>
             {
+                characterImage.material.SetTexture(SecondTex, null);
+                characterImage.material.SetFloat(Lerp, 0);
                 characterImage.texture = nextImage;
                 characterImage.SetNativeSize();
-                characterImage.color = Color.white;
-                transitionImage.color = new Color(1, 1, 1, 0);
-            }, true);
+                // transitionImage.color = new Color(1, 1, 1, 0);
+            }));
         }
     }
 }

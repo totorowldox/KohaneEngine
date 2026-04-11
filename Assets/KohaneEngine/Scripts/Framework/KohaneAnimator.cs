@@ -32,7 +32,7 @@ namespace KohaneEngine.Scripts.Framework
             _insertAt = time;
         }
 
-        public void AppendAnimation(Tween tween, bool forceAppend = false)
+        public void AppendAnimation(Tween tween)
         {
             CheckTweenSequence();
 
@@ -49,7 +49,7 @@ namespace KohaneEngine.Scripts.Framework
                 return;
             }
 
-            if (_defaultMode == DefaultMode.Parallel && !forceAppend)
+            if (_defaultMode == DefaultMode.Parallel)
             {
                 _tweenSequence.Insert(_waitCounter, tween);
             }
@@ -59,19 +59,7 @@ namespace KohaneEngine.Scripts.Framework
             }
         }
 
-        public void JoinAnimation(Tween tween)
-        {
-            CheckTweenSequence();
-            if (StateManager.IsSkipping)
-            {
-                tween.Complete();
-                return;
-            }
-
-            _tweenSequence.Join(tween);
-        }
-
-        public void AppendCallback(TweenCallback callback, bool forceAppend = false)
+        public void AppendCallback(TweenCallback callback)
         {
             CheckTweenSequence();
 
@@ -95,7 +83,7 @@ namespace KohaneEngine.Scripts.Framework
                 return;
             }
 
-            if (_defaultMode == DefaultMode.Parallel && !forceAppend)
+            if (_defaultMode == DefaultMode.Parallel)
             {
                 _tweenSequence.InsertCallback(_waitCounter, wrappedCallback);
             }
@@ -124,6 +112,7 @@ namespace KohaneEngine.Scripts.Framework
                 _tweenSequence.OnComplete(delegate
                 {
                     _pendingCallbacks.ForEach(p => p?.Invoke());
+                    _pendingCallbacks.Clear();
                     endCallback.Invoke();
                 });
                 _tweenSequence.Play();
@@ -138,6 +127,7 @@ namespace KohaneEngine.Scripts.Framework
         public void InterruptAnimation()
         {
             _pendingCallbacks.ForEach(p => p?.Invoke());
+            _pendingCallbacks.Clear();
             _tweenSequence.Complete();
         }
 
@@ -153,10 +143,11 @@ namespace KohaneEngine.Scripts.Framework
 
         private void CheckTweenSequence()
         {
-            if (_tweenSequence.IsActive() || _tweenSequence.IsPlaying())
+            if (_tweenSequence != null &&_tweenSequence.IsActive())
             {
                 return;
             }
+            _tweenSequence?.Kill();
 
             _pendingCallbacks.Clear();
             _waitCounter = 0;

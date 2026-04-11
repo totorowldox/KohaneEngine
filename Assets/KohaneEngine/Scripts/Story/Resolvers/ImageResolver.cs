@@ -7,11 +7,14 @@ using KohaneEngine.Scripts.Structure;
 using KohaneEngine.Scripts.Utils;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace KohaneEngine.Scripts.Story.Resolvers
 {
     public class ImageResolver : Resolver
     {
+        private static readonly int SecondTex = Shader.PropertyToID("_SecondTex");
+        private static readonly int Lerp = Shader.PropertyToID("_Lerp");
         private readonly IResourceManager _resourceManager;
         private readonly KohaneBinder _binder;
         private readonly KohaneAnimator _animator;
@@ -76,12 +79,10 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         private ResolveResult ImageSwitch(Block block)
         {
             var id = block.GetArg<string>(0);
-            SetImage(GetImage(id), block.GetArg<string>(1), block.GetArg<float>(2),
-                block.GetArg<float>(3));
+            SetImage(GetImage(id), block.GetArg<string>(1), block.GetArg<float>(2));
             return ResolveResult.SuccessResult();
         }
 
-        // TODO: destroy used image or use an object pool
         [StoryFunctionAttr("__imgDelete")]
         private ResolveResult ImageDelete(Block block)
         {
@@ -91,8 +92,14 @@ namespace KohaneEngine.Scripts.Story.Resolvers
                 return ResolveResult.FailResult(
                     "[ImageResolver] Deleting undefined image, are you using builtin function???");
             }
-
+            
+            // Or use a pool if you are a nerd
             _images.Remove(id);
+            if (_imagePersistentEffects.ContainsKey(id))
+            {
+                _imagePersistentEffects[id].Kill();
+                _imagePersistentEffects.Remove(id);
+            }
             return ResolveResult.SuccessResult();
         }
 
@@ -110,7 +117,10 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             var uiCanvas = _binder.CreateImage();
             uiCanvas.name = $"Image - {id}";
             uiCanvas.sortingOrder = layer;
-            _images.Add(id, uiCanvas.GetComponentInChildren<RawImage>());
+            
+            var newImg = uiCanvas.GetComponentInChildren<RawImage>();
+            newImg.material = new Material(Shader.Find("Unlit/AlphaBlend"));
+            _images.Add(id, newImg);
             return ResolveResult.SuccessResult();
         }
 
@@ -154,7 +164,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
                     break;
                 case "shake":
                     effectTween = GetImage(id).rectTransform
-                        .DOShakeAnchorPos(dur, new Vector2(0, 20), 20, 90, false, false, ShakeRandomnessMode.Harmonic);
+                        .DOShakeAnchorPos(dur, new Vector2(20, 20), 20, 90, false, false, ShakeRandomnessMode.Harmonic);
                     break;
                 default:
                     throw new InvalidOperationException($"[CharacterResolver] Invalid effect name: {effectName}");
@@ -185,7 +195,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
         }
 
         // TODO: implement async loading
-        private void SetImage(RawImage img, string path, float newAlpha, float duration)
+        private void SetImage(RawImage img, string path, float duration)
         {
             var nextImage = _resourceManager.LoadResource<Texture>(string.Format(Constants.ImagePath,
                 path));
@@ -193,39 +203,31 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             {
                 img.texture = nextImage;
                 img.SetNativeSize();
-                img.transform.GetChild(0).GetComponent<RawImage>().color = new Color(1, 1, 1, 0);
                 //img.material.SetFloat(Progress, 0);
                 return;
             }
 
-            var transitionImage = img.transform.GetChild(0).GetComponent<RawImage>();
+            //var transitionImage = img.transform.GetChild(0).GetComponent<RawImage>();
 
-            _animator.AppendCallback(() =>
-            {
-                transitionImage.texture = nextImage;
-                transitionImage.SetNativeSize();
-            }, true);
+     
 
             // _animator.AppendTweenAnimation(img.DOFade(0,
             //     Constants.ImageCrossFadeDuration), true);
             // _animator.JoinTweenAnimation(transitionImage.DOFade(1,
             //     Constants.ImageCrossFadeDuration));
-            var tempAlpha = 0f;
-            var targetAlpha = newAlpha;
-            _animator.AppendAnimation(DOTween.To(() => tempAlpha, (x) =>
+            _animator.AppendAnimation(img.material.DOFloat(1, Lerp, duration).OnStart(() =>
             {
-                tempAlpha = x;
-                img.color = new Color(1, 1, 1, targetAlpha - x);
-                transitionImage.color = new Color(1, 1, 1, x);
-            }, targetAlpha, duration), true);
-
-            _animator.AppendCallback(() =>
+                img.material.SetTexture(SecondTex, nextImage);
+                // transitionImage.texture = nextImage;
+                // transitionImage.SetNativeSize();
+            }).OnComplete(() =>
             {
+                img.material.SetTexture(SecondTex, null);
+                img.material.SetFloat(Lerp, 0);
                 img.texture = nextImage;
                 img.SetNativeSize();
-                img.color = Color.white;
-                transitionImage.color = new Color(1, 1, 1, 0);
-            }, true);
+                // transitionImage.color = new Color(1, 1, 1, 0);
+            }));
         }
     }
 }

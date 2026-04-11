@@ -7,13 +7,16 @@ Shader "Unlit/PatternGradient"
         _Progress("Progress", Range (0, 1)) = 0
         _Gradient("Gradient", Range(0, 1)) = 0.1
         _Alpha("Alpha", Range(0,1)) = 1
-        [Toggle(INVERT_Y)] _InvertY ("Invert Y Axis", Float) = 0
+        [Toggle(PURE_BLACK)] _UseBlack ("Use pure black?", Float) = 0
     }
     SubShader
     {
         Tags
         {
             "Queue"="Transparent"
+            "RenderType"="Transparent" 
+            "PreviewType"="Plane"
+            "IgnoreProjector"="True"
         }
 
         // No culling or depth
@@ -27,7 +30,6 @@ Shader "Unlit/PatternGradient"
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #pragma shader_feature INVERT_Y
 
             #include "UnityCG.cginc"
 
@@ -48,6 +50,7 @@ Shader "Unlit/PatternGradient"
             fixed _Progress;
             fixed _Alpha;
             fixed _Gradient;
+            fixed _UseBlack;
 
             v2f vert(appdata v)
             {
@@ -69,26 +72,26 @@ Shader "Unlit/PatternGradient"
                 _Progress = cast_value(_Progress, 0.0, 1.0, -_Gradient, 1.0);
 
                 float4 transit = tex2D(_PatternTex, i.uv);
-                #if INVERT_Y
-                float2 flippedUV = float2(i.uv.x, 1.0 - i.uv.y);
-                float4 mainTex = tex2D(_MainTex, flippedUV);
-                #else
-                float4 mainTex = tex2D(_MainTex, i.uv);
-                #endif
+                float4 main_tex = float4(0, 0, 0, 1);
+                if (_UseBlack < 0.5)
+                {
+                    main_tex = tex2D(_MainTex, i.uv);
+                    main_tex.a = _Alpha;
+                }
 
                 // 使用 float 提高计算中间值的精度
                 float range_val = transit.r - _Progress;
 
                 if (transit.r < _Progress)
                 {
-                    mainTex.a *= _Alpha;
-                    return mainTex;
+                    main_tex.a *= _Alpha;
+                    return main_tex;
                 }
                 if (transit.r < _Progress + _Gradient)
                 {
                     float alpha = 1.0 - saturate(range_val / _Gradient);
-                    mainTex.a *= _Alpha * alpha;
-                    return mainTex;
+                    main_tex.a *= _Alpha * alpha;
+                    return main_tex;
                 }
                 return float4(0, 0, 0, 0);
             }

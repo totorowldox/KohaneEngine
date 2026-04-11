@@ -25,7 +25,7 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             _screenEffectManager = binder.screenEffectManager;
             _animator = animator;
             Functions.Add("showDialogBox", ShowDialogBox);
-            Functions.Add("blackScreen", BlackScreen);
+            Functions.Add("fadeTransition", FadeTransition);
             Functions.Add("prepareTransition", PrepareTransition);
             Functions.Add("startTransition", StartTransition);
             Functions.Add("effect", SetScreenEffect);
@@ -41,20 +41,20 @@ namespace KohaneEngine.Scripts.Story.Resolvers
             return ResolveResult.SuccessResult();
         }
 
-        [StoryFunctionAttr("blackScreen")]
-        private ResolveResult BlackScreen(Block block)
+        [StoryFunctionAttr("fadeTransition")]
+        private ResolveResult FadeTransition(Block block)
         {
-            var alpha = block.GetArg<float>(0);
-            var tween = block.GetArg<int>(1);
-            var dur = block.GetArg<float>(2);
-            _animator.AppendAnimation(_transitionLayer.FadeOut(tween, dur));
+            var tween = block.GetArg<int>(0);
+            var dur = block.GetArg<float>(1);
+            _animator.AppendAnimation(_transitionLayer.Fade(tween, dur));
             return ResolveResult.SuccessResult();
         }
 
         [StoryFunctionAttr("prepareTransition")]
         private ResolveResult PrepareTransition(Block block)
         {
-            _animator.AppendCallback(() => { _transitionLayer.PrepareTransition(); }, true);
+            var black = block.GetArg<int>(0);
+            _animator.AppendCallback(() => { _transitionLayer.PrepareTransition(black != 0); });
             return ResolveResult.SuccessResult();
         }
 

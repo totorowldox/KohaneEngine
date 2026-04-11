@@ -14,7 +14,7 @@
 # Characters
 -extern __charDefine id
 -extern __charDelete id
--extern charSwitch id path alpha=1.0 time=0.5 # (tested) switch character image
+-extern charSwitch id path time=0.5 # (tested) switch character image
 -extern charMove id x=0.0 y=0.0 tween=0 time=0.5 # (tested) move character
 -extern charAlpha id alpha=1.0 tween=0 time=0.5 # (tested) set character's alpha value
 -extern charScale id x=1.0 y=1.0 tween=0 time=0.5 # (tested) scale character
@@ -34,7 +34,7 @@
 # Images
 -extern __imgDefine id layer
 -extern __imgDelete id
--extern imgSwitch id path alpha=1.0 time=0.5 # (tested) switch image (should be the same size)
+-extern imgSwitch id path time=0.5 # (tested) switch image (should be the same size)
 -extern imgMove id x=0.0 y=0.0 tween=0 time=0.5 # (tested) move image
 -extern imgAlpha id alpha=1.0 tween=0 time=0.5 # (tested) set alpha value
 -extern imgScale id x=1.0 y=1.0 tween=0 time=0.5 # (tested) scale image
@@ -66,6 +66,7 @@
 
 -macro bgSwitch path tween=0 time=1 # (tested) switch background image, real time would be 2s !IMPORTANT
 @bgAlpha 0 tween time
+@after
 @__bgSwitch path
 @bgAlpha 1 tween time
 @bgMove 0 0 tween time
@@ -76,21 +77,44 @@
 @__bgRemove
 
 # UI Control
--extern blackScreen alpha=0.0 tween=0 time=1 # (tested) set black screen
--extern showDialogBox alpha=1.0 tween=0 time=1 # (tested) set dialog box's alpha
--extern prepareTransition # (tested) converts current frame to top as mask for transition
+-extern showDialogBox alpha=1.0 tween=0 time=0.5 # (tested) set dialog box's alpha
+-extern prepareTransition black=0 # (tested) converts current frame to top as mask for transition
 -extern startTransition type=0 tween=0 time=1 # (tested) when underlying scene ready, start transition
+-extern fadeTransition tween=0 time=1
 -extern effect id time=0 # (tested) apply screen effect, use id="clear" to clear all effects
 
 -macro initScene tween=0 time=1
 @canSkip false
-@blackScreen 1 0 0
 @showDialogBox 0 0 0
 @blackScreen 0 tween time
 @showDialogBox 1 tween time
 @canSkip true
 
+-macro danceNotes
+@imgSpawn "dn1" "ETC_B001AA.png" 6 0 0 0.2 0.2 --alpha 1
+@imgSpawn "dn2" "ETC_B001AB.png" 6 0 0 0.8 0.8 --alpha 0
+@imgSpawn "dn3" "ETC_B001AC.png" 6 0 0 0.8 0.8 --alpha 0
+@imgEffect "dn1" "shakeX" --time 0.1
+@imgEffect "dn2" "shakeX" --time 0.1
+@imgEffect "dn3" "shakeX" --time 0.1
+@imgScale "dn1" 1.2 1.2 --time 1
+@imgScale "dn2" 1.4 1.4 --time 1
+@imgScale "dn3" 1.4 1.4 --time 1
+@wait 0.2
+@imgAlpha "dn2" 1 --time 0.3
+@imgAlpha "dn3" 1 --time 0.3
+@wait 0.3
+@imgAlpha "dn1" 0 --time 0.15
+@imgAlpha "dn2" 0 --time 0.3
+@imgAlpha "dn3" 0 --time 0.3
+@wait 0.3
+@imgRemove "dn1"
+@imgRemove "dn2"
+@imgRemove "dn3"
+
 -scene "toturaba_trail"
+@bgm "BGM003.OGG"
+
 @bgSwitch "BK301A.png" --time 0
 @imgSpawn "kt_cutin" "ETC_BATTLE_KATAN_F02.png"  6 -0.6 0 1.5 1.5
 @imgEffect "kt_cutin" "shakeX"
@@ -119,7 +143,7 @@
 @showDialogBox 1
 それは『人の塊』の中央に深々と突き立てられて――
 華淡:「ぬあッ！？」
-「汝、人を護りし者か？」
+人の塊:「汝、人を護りし者か？」
 @showDialogBox 0
 @effect "clear"
 @imgEffect "kim" "clear"
@@ -129,47 +153,259 @@
 @imgSpawn "ktmr_hands" "ETCEV_022.png" 6 0 0 1.5 1.5
 @imgEffect "ktmr_hands" "shakeX" 1
 @effect "speedLineH"
-@startTransition 13 --time 1
+@startTransition 12 --time 0.5
 @after
 @showDialogBox 1
 人の塊は、華淡のチェーンソウが深々と刺さったまま、\
-６４本の手足を伸ばして華淡の腕を掴んだ。 
+６４本の手足を伸ばして華淡の腕を掴んだ。
+@showDialogBox 0
+@after
+@imgRemove "ktmr_hands"
+@effect "clear"
+@bgScale 2.25 2.25 --time 0
+@bgMove 1 -1 --time 0
+@imgSpawn "ktmr_cutin" "ETC_BATTLE_ST13A_E01.png" 6 -0.5 -0.5 1.5 1.5 0
+@imgSpawn "kt_cutin" "ETC_BATTLE_KATAN_E03.png" 6 0.5 0.5 1.5 1.5 0
+@imgAlpha "ktmr_cutin" 1.0
+@imgAlpha "kt_cutin" 1.0 
+@imgMove "ktmr_cutin" -0.5 0 --tween 9 --time 1
+@imgMove "kt_cutin" 0.5 0 --tween 9 --time 1
+@after
+@showDialogBox 1
 人の塊:「共に来たり。共に。戦いの園へ」
 華淡: 「キモいキモイキモイキモ……っ」
 暴れていた華淡が、不意に全く動かなくなる。 
 まるで神経性の毒でも打ち込まれたように。
+@showDialogBox 0
+@after
+@imgRemove "ktmr_cutin"
+@imgRemove "kt_cutin"
+@imgSpawn "enju_cutin" "ETC_BATTLE_ENJU_A03.png" 6 0 0 1.5 1.5
+@effect "speedLine"
+@wait 0.5
+@imgSwitch "enju_cutin" "ETC_BATTLE_ENJU_A02.png"
+@imgScale "enju_cutin" 1.7 1.7
+@showDialogBox 1
 槐:「まずい！　――ダンス・ノーツ！」
 人の塊:「む？」 
+@showDialogBox 0
+@after
+@effect "clear"
+@prepareTransition --black 1
+@imgSwitch "enju_cutin" "ETC_BATTLE_ENJU_B01.png" --time 0
+@imgScale "enju_cutin" -1.5 1.5 --time 0 # Horizontal flip
+@imgEffect "enju_cutin" "shakeX"
+@effect "speedLineH"
+@startTransition 13 --time 0.1
+@showDialogBox 1
 俺は右の拳で華淡に、\
 左の拳で『人の塊』に触れた。 
 それはお互い、５ｍずつぶっ飛ばされる。
-たとえどんな障害がそこにあったとしても―― 
+たとえどんな障害がそこにあったとしても――
+@showDialogBox 0
+@after
+@prepareTransition
+@effect "clear"
+@imgRemove "enju_cutin"
+@bgAlpha 0 --time 0 # Set to a blank screen for later performance
+@startTransition 19 --time 0.2
+@after
+@danceNotes
+@after
+@prepareTransition 1
+@effect "speedLineH"
+@bgScale 2 2 --time 0
+@bgMove -0.9 0 --time 0
+@charSpawn "kt" "ST02A_F200.png" -0.5 -1 1.5 1.5 0
+@startTransition 12 --time 1
+@bgAlpha 1 0
+@after
+@charAlpha "kt" 1
+@charMove "kt" 0 -1
+@bgMove -1 0
+@showDialogBox 1
 華淡:「ぐぅううっ！」
+@showDialogBox 0
+@after
+@prepareTransition
+@charAlpha "kt" 0 --time 0
+@bgScale 1.5 1.5 --time 0
+@bgMove 0.4 -0.5 --time 0
+@charSpawn "ktmr" "ST13A_A010.png" 0.5 -0.15 1.2 1.2 0
+@effect "clear"
+@startTransition 13 --time 0.5
+@after
+@charAlpha "ktmr" 1
+@charMove "ktmr" 0 -0.15
+@bgMove 0.5 -0.5
+@after
+@showDialogBox 1
 人の塊:「ぎぃいい！！」
+@showDialogBox 0
+@after
+@charAlpha "ktmr" 0
+@after
+@charRemove "ktmr"
+@showDialogBox 1
 ぐちぐちぐち！　と嫌な音がして、\
 華淡を掴んでいた腕の幾つかがちぎれる。
 華淡の腕も決してダメージは少なく無いようで、\
 重いチェーンソウをだらんと握っていた。
+@showDialogBox 0
+@after
+@effect "speedLine"
+@bgMove 0 0 --time 0
+@bgScale 2 2 --time 0
+@charSpawn "ej" "ST25A_A010.png" 0 0 1.0 1.0 --alpha 0
+@after
+@charAlpha "ej" 1
+@charScale "ej" 1.5 1.5
+@charMove "ej" 0 -0.4
+@wait 1
+@effect "clear"
+@prepareTransition 1
+@charAlpha "ej" 0 --time 0
+@effect "speedLineH"
+@imgSpawn "ej_fist" "ETCEV_044.png" 6 0 0 1.5 1.5
+@imgEffect "ej_fist" "shakeX" --time 1
+@startTransition 13 --time 0.1
+@after
+@showDialogBox 1
 槐:「もういっちょ――！」
 引き下がった『人の塊』に、ダンス・ノーツを叩き込む。 
 それは腕を集めて防御姿勢を取っているが、\
 この能力には関係ない。 
+@showDialogBox 0
+@after
+@effect "clear"
+@prepareTransition
+@imgRemove "ej_fist"
+@bgAlpha 0 --time 0 # Set to a blank screen for later performance
+@startTransition 19 --time 0.2
+@after
+@danceNotes
+@after
+@prepareTransition 1
+@startTransition 13 --time 1
+@bgAlpha 1 0
+@effect "speedLineH"
+@imgSpawn "kim" "ETC_COMMON20_KIM001A.png" 6 0 0 1.6 1.6
+@imgEffect "kim" "shakeX" 2
+@wait 2
+@prepareTransition
+@effect "clear"
+@imgRemove "kim"
+@bgScale 2 2 --time 0
+@bgMove 1 1 --time 0
+@imgSpawn "mist" "ETC_EFFECT_S03LS_B.png" 6 0 0 1.5 1.5
+@wait 0.5
+@startTransition 13 --time 1
+@after
+@showDialogBox 1
 強制的に５ｍ吹き飛ぶ能力×俺の拳の速度で、\
-『人の塊』はトンネル奥まで弾き飛ばされた。 
+『人の塊』はトンネル奥まで弾き飛ばされた。
+@showDialogBox 0
+@after
+@prepareTransition
+@imgRemove "mist"
+@charSwitch "kt" "ST02A_C200.png" --time 0
+@charAlpha "kt" 1 --time 0
+@charMove "kt" 0 -1 --time 0
+@charSwitch "ej" "ST05A_C120.png" --time 0
+@charMove "ej" -0.4 -1 --time 0
+@bgMove -0.2 0 --time 0
+@after
+@startTransition 12 --time 1
+@after
+@charMove "kt" 0.4 -1
+@bgMove 0 0
+@after
+@charAlpha "ej" 1
+@charMove "ej" -0.35 -1
+@showDialogBox 1
 槐:「華淡！　大丈夫か！？」
+@charSwitch "kt" "ST02A_C100.png"
 華淡:「……すい、ません。身体、何か、毒……っ」
+@charSwitch "ej" "ST05A_E180.png"
 槐:「！　やっぱりあいつ、神経毒かなにかを……？」
+@charSwitch "ej" "ST05A_C040.png"
 槐:「わかった。華淡、下がってろ。後は俺が――」
+@charSwitch "kt" "ST02A_C180.png"
 華淡:「はー？　ナメないで、下さいよ……ｗ」
+@showDialogBox 0
+@after
+@prepareTransition
+@charAlpha "ej" 0 --time 0
+@bgMove 0.5 0 --time 0
+@charSwitch "kt" "ST02A_B120.png" --time 0
+@charScale "kt" 2.5 2.5 --time 0
+@charMove "kt" 0 -2.3 --time 0
+@effect "speedLine"
+@fadeTransition
+@after
+@showDialogBox 1
+@sequence true
+@charScale "kt" 2.8 2.8 --time 0.1
+@charScale "kt" 2.5 2.5 --time 0.1
+@charScale "kt" 2.8 2.8 --time 0.1
+@charScale "kt" 2.5 2.5 --time 0.1
+@sequence false
 華淡:「赤刀！」
+@showDialogBox 0
+@after
+@prepareTransition 1
+@effect "clear"
+@charAlpha "kt" 0 --time 0
+@bgSwitch "BKL907A.png" --time 0
+@bgScale -2.5 2.5 --time 0 # Flip X axis
+@imgSpawn "chainsaw" "ETC_BATTLE_KATAN_F05.png" 6 0 0 1.5 1.5
+@imgEffect "chainsaw" "shakeX" 1
+@effect "speedLineH"
+@startTransition 13 --time 0.1
+@wait 1
+@prepareTransition
+@effect "clear"
+@imgRemove "chainsaw"
+@bgAlpha 0
+@after
+@startTransition 19 --time 0.3
+@after
+@bgMove 0 0 --time 0
+@bgSwitch "RED.png" --time 0
+@bgAlpha 1 --time 0
+@wait 0.1
+@bgAlpha 0 --time 0
+@imgSpawn "bld" "ETC_EFFECT_S02S.png" 6 0 0 1.5 1.5 --alph 0 --time 0
+@imgScale "bld" 2 2 --time 0.3
+@imgAlpha "bld" 1 --time 0.3
+@after
+@showDialogBox 1
 彼女は震える腕で、\
 自分の心臓にチェーンソウを突き刺した。
 華淡:「ぐぅっ……赤刀は、\
 『毒』だけを――切り離すッ！」
 ぶちゅっ、と、膿を潰した時のように、\
 緑の微かな液体がチェーンソウに滴った。
+@showDialogBox 0
+@after
+@prepareTransition
+@imgRemove "bld"
+@bgMove -0.9 0 --time 0
+@bgScale 2 2 --time 0
+@charSwitch "kt" "ST02A_C200.png" --alpha 0 --time 0
+@charScale "kt" 1.5 1.5
+@charMove "kt" 0 -1.5
+@bgSwitch "BK301A.png" --time 0
+@wait 0.2
+@startTransition 12 --time 1
+@after
+@charAlpha "kt" 1
+@charMove "kt" 0 -1
+@showDialogBox 1
 華淡:「はっ、はっ……ふぅー……。\
-完全回復完了！　華淡しか勝たん！」
+完全回復完了！[wait 1][charSwitch "kt" "ST02A_C220.png"]　華淡しか勝たん！」
+
+
 
 # -scene "sakuramoyu_trail"
 # @initScene 0 1
